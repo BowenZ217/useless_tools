@@ -1,0 +1,66 @@
+name: Scheduled Script Execution
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+    - cron: '0 16 * * *'
+  workflow_dispatch: # Allows you to run this workflow manually from the Actions tab
+
+permissions: # 设置整个工作流程的权限
+  contents: write # 赋予对仓库内容的写权限
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run the script
+        env:
+          SAYHUAHUO_COOKIE: ${{ secrets.SAYHUAHUO_COOKIE }}
+          LEVEL_PLUS_COOKIE: ${{ secrets.LEVEL_PLUS_COOKIE }}
+          KF_FEIYUE_COOKIE: ${{ secrets.KF_FEIYUE_COOKIE }}
+          VIKACG_USERNAME: ${{ secrets.VIKACG_USERNAME }}
+          VIKACG_PASSWORD: ${{ secrets.VIKACG_PASSWORD }}
+          GALCG_USERNAME: ${{ secrets.GALCG_USERNAME }}
+          GALCG_PASSWORD: ${{ secrets.GALCG_PASSWORD }}
+          JMCOMIC_USERNAME: ${{ secrets.JMCOMIC_USERNAME }}
+          JMCOMIC_PASSWORD: ${{ secrets.JMCOMIC_PASSWORD }}
+        run: |
+          python main.py
+
+      - name: Upload 'logs' directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: |
+            logs/
+            sayhuahuo/
+            kf_feiyue/
+            kf_guguzhen/
+            kf_momozhen/
+            level_plus/
+            vikacg/
+            galcg/
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit and Push changes
+        run: |
+          git add data/*.json # 添加 data 文件夹下所有的 .json 文件
+          git commit -m "Automatically update JSON files in data folder" || echo "No changes to commit."
+          git push
