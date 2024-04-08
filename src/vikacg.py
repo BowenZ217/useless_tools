@@ -250,7 +250,6 @@ def vikacg():
         log_message(
             f"签到日期: {response_json['date']}\n"
             f"签到积分: {response_json['credit']}\n"
-            f"总积分: {response_json['mission']['my_credit']}"
         )
         json_data_handler.increment_value(response_json['credit'], CURRENT_MONTH, "vikacg", "credit_added")
     except json.JSONDecodeError as e:
