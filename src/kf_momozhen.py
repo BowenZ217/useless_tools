@@ -823,10 +823,31 @@ def kf_momozhen_beach_extract_data_content(data_content: str):
 
     return attributes_text
 
-def kf_momozhen_beach_print_equipment(html_content: str):
+def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     """
-    打印沙滩装备
+    打印 沙滩装备 并提取沙滩符合条件的 装备 (ID)
     """
+    
+    # Define the minimum level requirement for each rarity
+    rarity_level_requirements = {
+        '3': 295,
+        '4': 280,
+        '5': 260,
+        '6': 250,
+        '7': 250,
+        '8': 0,
+        '9': 0,
+        # Extend as needed for higher rarities
+    }
+    mystery_keywords = "神秘属性"
+    
+    min_melt_rarity = 3
+    min_melt_level = 250
+    
+    # Filter and collect the IDs based on rarity and level requirements
+    pick_ids = []
+    melt_ids = []
+
     try:
         level_pattern = r'Lv\.<span class=\'fyg_f18\'>(\d+)</span>'
         name_pattern = r'</span>.*?<br>\s*(.*?)$'
@@ -864,6 +885,21 @@ def kf_momozhen_beach_print_equipment(html_content: str):
 
             # Compiling extracted information
             info = f"{idx}. {equipment_name}({rarity})\nLv. {level}\nID = {id}\n" + attributes + "\n"
+
+            if mystery_keywords in attributes:
+                json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "神秘装备", rarity)
+            
+            if int(level) >= rarity_level_requirements.get(rarity, 999):
+                pick_ids.append(id)
+                json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "pick_count", rarity)
+            elif mystery_keywords in attributes: # 如果是神秘装备
+                melt_ids.append(id)
+                json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "melt_count", rarity)
+            elif int(rarity) >= min_melt_rarity and int(level) >= min_melt_level:
+                melt_ids.append(id)
+                json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "melt_count", rarity)
+            else:
+                json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "clean_count", rarity)
             
             # Printing the information for each equipment
             log_message(info)
@@ -873,7 +909,7 @@ def kf_momozhen_beach_print_equipment(html_content: str):
         log_message(f"打印沙滩装备失败: {e}", level="error")
         save_string_as_file(html_content, "kf_momozhen_beach_print_fail", "kf_momozhen")
 
-    return
+    return pick_ids, melt_ids
 
 def kf_momozhen_beach_extract_equipment_ids(html_content: str):
     """
@@ -1065,15 +1101,12 @@ def kf_momozhen_beach_pick_equipment():
     response_text = kf_momozhen_fyg_read("1", beach_url)
     time.sleep(1)
     if response_text:
-        log_message(f"沙滩装备: \n")
-        kf_momozhen_beach_print_equipment(response_text)
+        log_message(f"分析沙滩装备: \n")
+        pick_ids, melt_ids = kf_momozhen_beach_extract_and_print_equipment(response_text)
         save_string_as_file(response_text, "fyg_beach_equipment", "kf_momozhen")
-
-        log_message(f"领取装备: \n")
-        pick_ids, melt_ids = kf_momozhen_beach_extract_equipment_ids(response_text)
+        
         kf_momozhen_beach_pick_equipment_with_id(pick_ids)
 
-        log_message(f"熔炼装备: \n")
         kf_momozhen_beach_melt_equipment_with_id(melt_ids)
     else:
         log_message("沙滩无装备")
