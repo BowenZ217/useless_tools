@@ -1541,9 +1541,9 @@ def kf_momozhen_extract_battle_info(html_content: str):
     
     # Determine the winner
     try:
-        # winner_text = soup.find(
-        #     'div',
-        #     class_='alert alert-danger with-icon fyg_tc').get_text().strip()
+        winner_text = soup.find(
+            'div',
+            class_='alert alert-danger with-icon fyg_tc').get_text().strip()
         winner_text = "User"
         output = f"{name_1} ({stats_1}) v.s. {name_2} ({stats_2})\n{winner_text} "
         log_message(f"{output}")
