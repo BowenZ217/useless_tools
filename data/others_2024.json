@@ -2,7 +2,8 @@
     "4": {
         "level_plus": {
             "tasks_completed": {
-                "每日签到": 3
+                "每日签到": 3,
+                "每周签到": 1
             }
         },
         "vikacg": {
@@ -12,5 +13,5 @@
             "credit_added": 31
         }
     },
-    "total_run_count": 5
+    "total_run_count": 6
 }
