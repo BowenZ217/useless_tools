@@ -203,7 +203,6 @@ def set_cookie():
             return True
         except Exception as e:
             log_message(f"使用 {domain} 设置 Cookie 失败: {e}", level="error")
-            save_string_as_file(response.text, prefix="jmcomic_setting_error", folder="jmcomic")
             continue
     return False
 
@@ -231,7 +230,6 @@ def jmcomic_login():
         # log_message(f"登录信息: {data['message']}")
     except Exception as e:
         log_message(f"登录失败: {e}", level="error")
-        save_string_as_file(response.text, prefix="jmcomic_login_error", folder="jmcomic")
     return True
 
 def jmcomic_get_daily_id():
@@ -247,7 +245,6 @@ def jmcomic_get_daily_id():
         JMCOMIC_DAILY_ID = data.get("daily_id", 43)
     except Exception as e:
         log_message(f"获取 daily_id 失败: {e}", level="error")
-        save_string_as_file(response.text, prefix="jmcomic_daily_id_error", folder="jmcomic")
     return
 
 def jmcomic_check_in():
@@ -267,7 +264,6 @@ def jmcomic_check_in():
         log_message(f"签到结果: {data['msg']}", level="info")
     except Exception as e:
         log_message(f"签到失败: {e}", level="error")
-        save_string_as_file(response.text, prefix="jmcomic_check_in_error", folder="jmcomic")
 
     return
 

@@ -169,7 +169,6 @@ def kf_momozhen_fyg_read(f: str, id: str=None, zid: str=None, ca: str=None, Refe
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_read({f}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_read_{f}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_read({f}) (Request Error): {e}", level="error")
@@ -219,7 +218,6 @@ def kf_momozhen_fyg_menu(m: str, id: str=None, Referer: str=None):
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_menu({m}, {id}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_menu_{m}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_menu({m}, {id}) (Request Error): {e}", level="error")
@@ -333,7 +331,6 @@ def kf_momozhen_fyg_click(c: str, id: str=None, id2: str=None, id99: str=None, y
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_click({c}, {id}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_click_{c}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_click({c}, {id}) (Request Error): {e}", level="error")
@@ -375,7 +372,6 @@ def kf_momozhen_fyg_v_intel(id: str="2", Referer: str=None):
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_v_intel({id}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_v_intel_{id}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_v_intel({id}) (Request Error): {e}", level="error")
@@ -429,7 +425,6 @@ def kf_momozhen_fyg_shop_click(c: str, Referer: str=None):
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_shop_click({c}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_shop_click_{c}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_shop_click({c}) (Request Error): {e}", level="error")
@@ -466,7 +461,6 @@ def kf_momozhen_fyg_s_int(Referer: str=None):
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_v_intel({id}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_v_intel_{id}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_v_intel({id}) (Request Error): {e}", level="error")
@@ -516,7 +510,6 @@ def kf_momozhen_fyg_llpw_c(iu: str, Referer: str=None):
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_llpw_c({iu}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, f"fyg_llpw_c_{iu}_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_llpw_c({iu}) (Request Error): {e}", level="error")
@@ -542,7 +535,6 @@ def kf_momozhen_fyg_index():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_index 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_index_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_index (Request Error): {e}", level="error")
@@ -571,7 +563,6 @@ def kf_momozhen_fyg_stat():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_stat 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_stat_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_stat (Request Error): {e}", level="error")
@@ -597,7 +588,6 @@ def kf_momozhen_fyg_ulog():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_ulog 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_ulog_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_ulog (Request Error): {e}", level="error")
@@ -623,7 +613,6 @@ def kf_momozhen_fyg_llpw():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_llpw 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_llpw_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_llpw (Request Error): {e}", level="error")
@@ -647,7 +636,6 @@ def kf_momozhen_fyg_beach():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_beach 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_beach_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_beach (Request Error): {e}", level="error")
@@ -675,7 +663,6 @@ def kf_momozhen_fyg_pk():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_pk 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_pk_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_pk (Request Error): {e}", level="error")
@@ -703,7 +690,6 @@ def kf_momozhen_fyg_wish():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_wish 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_wish_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_wish (Request Error): {e}", level="error")
@@ -727,7 +713,6 @@ def kf_momozhen_fyg_gem():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_gem 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_gem_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_gem (Request Error): {e}", level="error")
@@ -754,7 +739,6 @@ def kf_momozhen_fyg_shop():
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 fyg_shop 失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "fyg_shop_fail", "kf_momozhen", response.encoding)
         return ""
     except requests.RequestException as e:
         log_message(f"请求 fyg_shop (Request Error): {e}", level="error")
@@ -1577,7 +1561,7 @@ def kf_momozhen_extract_battle_info(html_content: str):
         winner_text = soup.find(
             'div',
             class_='alert alert-danger with-icon fyg_tc').get_text().strip()
-        winner_text = "User"
+        winner_text = "User 获得了胜利! "
         output = f"{name_1} ({stats_1}) v.s. {name_2} ({stats_2})\n{winner_text} "
         log_message(f"{output}")
         return 1

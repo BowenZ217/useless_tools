@@ -60,7 +60,6 @@ def kf_feiyue_request_kf_growup() -> str:
     except requests.HTTPError as e:
         log_message(f"签到请求失败 HTTP Error ({response.status_code}): {e}", level="error")
         log_message("\n------------------------------------\n")
-        save_string_as_file(response.text, "kf_feiyue_fail", "kf_feiyue", response.encoding)
         return "签到请求失败"
     except requests.RequestException as e:
         log_message(f"签到请求失败 Request Error: {e}", level="error")
@@ -82,14 +81,12 @@ def kf_feiyue_request_checkin(url: str):
         log_message(kf_feiyue_extract_sucess_page(response.text))
     except requests.HTTPError as e:
         log_message(f"签到请求失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "kf_feiyue_fail", "kf_feiyue", response.encoding)
         return False
     except requests.RequestException as e:
         log_message(f"签到请求失败 Request Error: {e}", level="error")
         return False
     except Exception as e:
         log_message(f"页面解析失败: {e}", level="error")
-        save_string_as_file(response.text, prefix="kf_feiyue_sucess", folder="kf_feiyue")
         return False
     return True
 

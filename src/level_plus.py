@@ -54,7 +54,6 @@ def level_plus_tasks_page():
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"level-plus 任务页面请求失败, HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, prefix="level_plus_fail", folder="level_plus")
         return ""
     except requests.RequestException as e:
         log_message(f"level-plus 任务页面请求失败, Request Error: {e}", level="error")
@@ -187,7 +186,6 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"领取 {task_name} 任务 失败, HTTP Error ({response.status_code}): {e}")
-        save_string_as_file(response.text, prefix="level_plus_fail", folder="level_plus")
         return
     except requests.RequestException as e:
         log_message(f"领取 {task_name} 任务 失败, Request Error: {e}")
@@ -221,7 +219,6 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"领取 {task_name} 奖励 失败, HTTP Error ({response.status_code}): {e}")
-        save_string_as_file(response.text, prefix="level_plus_fail", folder="level_plus")
         return
     except requests.RequestException as e:
         log_message(f"领取 {task_name} 奖励 失败, Request Error: {e}")

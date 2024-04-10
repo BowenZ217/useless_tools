@@ -6,7 +6,7 @@ import requests
 
 from .utils import json_data_handler
 from .utils.logger import log_message
-from .utils.file_operations import save_string_as_file
+# from .utils.file_operations import save_string_as_file
 
 CURRENT_MONTH = str(datetime.datetime.now().month)
 
@@ -100,7 +100,6 @@ def vikacg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"网络测试 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         log_message(f"网络测试 Request Error: {e}", "error")
     except Exception as e:
@@ -119,7 +118,6 @@ def vikacg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"collectionIndex HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         log_message(f"collectionIndex Request Error: {e}", level="error")
     except Exception as e:
@@ -139,7 +137,6 @@ def vikacg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"getLatestAnnouncement HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getLatestAnnouncement Request Error: {e}", level="error")
     except Exception as e:
@@ -157,7 +154,6 @@ def vikacg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"getIndex HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getIndex Request Error: {e}", level="error")
     except Exception as e:
@@ -179,7 +175,6 @@ def vikacg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"getUserInfo HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getUserInfo Request Error: {e}", level="error")
     except KeyError:
@@ -203,7 +198,6 @@ def vikacg():
     except requests.HTTPError as e:
         # Handle HTTP errors
         log_message(f"getStreamList HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         # 处理HTTP错误
         log_message(f"getStreamList Request Error: {e}", level="error")
@@ -229,7 +223,6 @@ def vikacg():
     except requests.HTTPError as e:
         # Handle HTTP errors
         log_message(f"getUserMission HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "vikacg_fail", "vikacg", response.encoding)
     except requests.RequestException as e:
         # 处理HTTP错误
         log_message(f"getUserMission Request Error: {e}", level="error")
@@ -261,7 +254,6 @@ def vikacg():
         # Handle HTTP errors
         log_message(f"userMission HTTP Error ({response.status_code}): {e}", level="error")
         log_message("\n------------------------------------\n")
-        save_string_as_file(response.text, "vikacg_fail", "vikacg", response.encoding)
         return False
     except requests.RequestException as e:
         # 处理HTTP错误

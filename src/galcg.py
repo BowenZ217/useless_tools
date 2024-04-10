@@ -6,7 +6,7 @@ import requests
 
 from .utils import json_data_handler
 from .utils.logger import log_message
-from .utils.file_operations import save_string_as_file
+# from .utils.file_operations import save_string_as_file
 
 CURRENT_MONTH = str(datetime.datetime.now().month)
 
@@ -97,7 +97,6 @@ def galcg():
     except requests.HTTPError as e:
         # 处理HTTP错误
         log_message(f"getUserInfo HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "galcg_fail", "galcg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getUserInfo Request Error: {e}", level="error")
     except Exception as e:
@@ -114,7 +113,6 @@ def galcg():
         pass
     except requests.HTTPError as e:
         log_message(f"getLatestAnnouncement HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "galcg_fail", "galcg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getLatestAnnouncement Request Error: {e}", level="error")
     except Exception as e:
@@ -131,7 +129,6 @@ def galcg():
         pass
     except requests.HTTPError as e:
         log_message(f"getUserMission HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "galcg_fail", "galcg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getUserMission Request Error: {e}", level="error")
     except Exception as e:
@@ -150,7 +147,6 @@ def galcg():
         pass
     except requests.HTTPError as e:
         log_message(f"getMissionList HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(str(response.json()), "galcg_fail", "galcg", response.encoding)
     except requests.RequestException as e:
         log_message(f"getMissionList Request Error: {e}", level="error")
     except Exception as e:
@@ -182,7 +178,6 @@ def galcg():
     except requests.HTTPError as e:
         log_message(f"签到请求失败 HTTP Error ({response.status_code}): {e}", level="error")
         log_message("\n------------------------------------\n")
-        save_string_as_file(str(response.json()), "galcg_fail", "galcg", response.encoding)
         return False
     except requests.RequestException as e:
         log_message(f"签到请求失败 Request Error: {e}", level="error")

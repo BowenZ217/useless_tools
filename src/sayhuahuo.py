@@ -139,10 +139,11 @@ def huahuoxueyuan():
             # 如果找到匹配项, 提取formhash
             formhash = match.group(1)
             log_message(f"找到的formhash是: {formhash}")
+        else:
+            save_string_as_file(response.text, "sayhuahuo_formhash_fail", "sayhuahuo", response.encoding)
 
     except requests.HTTPError as e:
         log_message(f"formhash 请求失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "sayhuahuo_fail", "sayhuahuo", response.encoding)
     except requests.RequestException as e:
         log_message(f"formhash 请求失败 Request Error: {e}", level="error")
     except Exception as e:
@@ -177,7 +178,6 @@ def huahuoxueyuan():
         
     except requests.HTTPError as e:
         log_message(f"签到请求失败 HTTP Error ({response.status_code}): {e}", level="error")
-        save_string_as_file(response.text, "sayhuahuo_fail", "sayhuahuo", response.encoding)
         return
     except requests.RequestException as e:
         log_message(f"签到请求失败 Request Error: {e}", level="error")
@@ -185,7 +185,6 @@ def huahuoxueyuan():
     except Exception as e:
         if 'response' in locals():
             log_message(f"签到解析失败: {e}", level="error")
-            save_string_as_file(response.text, prefix="sayhuahuo_checkin", folder="sayhuahuo")
         else:
             log_message(f"签到请求失败，无法获取响应: {e}", level="error")
         return
