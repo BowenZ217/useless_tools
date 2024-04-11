@@ -1770,6 +1770,17 @@ def kf_momo_test():
     kf_momozhen_fanpai()
 
 
+def kf_momozhen_test_dice_war():
+    """
+    尝试 骰子战争, 并保存结果 (`kf_momozhen_fyg_s_int`)
+    """
+    kf_momozhen_fyg_shop()
+
+    shop_url = f"{MOMOZHEN_BASE_URL}/fyg_shop.php"
+    for i in range(0, 30): # 30次
+        response_text = kf_momozhen_fyg_s_int(Referer=shop_url)
+        save_string_as_file(response_text, f"dice_war_{i}", "kf_momozhen")
+        time.sleep(1)
 
 # ------------------------------
 # 主函数
@@ -1816,4 +1827,5 @@ def kf_momozhen_start():
     # 签到
     kf_momozhen()
     # kf_momo_test()
+    # kf_momozhen_test_dice_war()
     
