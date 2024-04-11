@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 # Global variables to store the statistics and battle records
 total_rewards_statistics = {}
 awards_count_statistics = {}
+battle_results_statistics = {}
 battle_records = []
 
 KF_MOMOZHEN_DICE_WAR_REWARD_STATS_PATH = "./data/kf_momozhen_dice_war_reward_stats.json"
@@ -15,6 +16,7 @@ KF_MOMOZHEN_DICE_WAR_DATA_FOLDER = "./kf_momozhen" # "dice_war_{id}.txt"
 def load_data():
     global total_rewards_statistics
     global awards_count_statistics
+    global battle_results_statistics
     global battle_records
 
     try:
@@ -22,9 +24,11 @@ def load_data():
             reward_states = json.load(f)
             total_rewards_statistics = reward_states["总奖励统计"]
             awards_count_statistics = reward_states["奖励次数统计"]
+            battle_results_statistics = reward_states["战斗结果统计"]
     except FileNotFoundError:
         total_rewards_statistics = {}
         awards_count_statistics = {}
+        battle_results_statistics = {}
     
     try:
         with open(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH, "r", encoding="utf-8") as f:
@@ -35,7 +39,8 @@ def load_data():
 def save_data():
     reward_states = {
         "总奖励统计": total_rewards_statistics,
-        "奖励次数统计": awards_count_statistics
+        "奖励次数统计": awards_count_statistics,
+        "战斗结果统计": battle_results_statistics
     }
     with open(KF_MOMOZHEN_DICE_WAR_REWARD_STATS_PATH, "w", encoding="utf-8") as f:
         json.dump(reward_states, f, ensure_ascii=False, indent=4)
@@ -44,7 +49,7 @@ def save_data():
         json.dump(battle_records, f, ensure_ascii=False, indent=4)
 
 def process_dice_war_page(html_content: str):
-    global awards_count_statistics, battle_records
+    global awards_count_statistics, battle_records, battle_results_statistics
 
     # Parse the HTML
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -64,6 +69,7 @@ def process_dice_war_page(html_content: str):
             battle_info["敌人名称"] = enemy_name
         elif any(result in btn.text for result in ["胜利", "失败", "平局"]):
             battle_info["结果"] = btn.text.strip()
+            battle_results_statistics[btn.text.strip()] = battle_results_statistics.get(btn.text.strip(), 0) + 1
 
     # Find battle process for both sides
     process_btns = soup.find_all("button", class_=["btn fyg_tr fyg_mp3", "btn fyg_tl fyg_mp3"])
@@ -162,7 +168,9 @@ def process_total_rewards_statistics():
         "BVIP": r"获得 BVIP",
         # Add more patterns if needed
     }
+    total_times_count = 0
     for award_message, count in awards_count_statistics.items():
+        total_times_count += count
         for pattern_name, pattern in patterns.items():
             match = re.search(pattern, award_message)
             if match:
@@ -178,13 +186,14 @@ def process_total_rewards_statistics():
                         total_rewards_statistics[pattern_name] += count
                     else:
                         total_rewards_statistics[pattern_name] = count
+    total_rewards_statistics["总次数"] = total_times_count
     return
 
 def main():
     # Load data from JSON files
     load_data()
 
-    # process_dice_war_pages()
+    process_dice_war_pages(0, 39)
     process_total_rewards_statistics()
 
     # Save data to JSON files
