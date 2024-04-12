@@ -1787,7 +1787,7 @@ def kf_momozhen_process_gem():
     gem_hour = kf_momozhen_gem_find_work_hours()
     if gem_hour < 1:
         kf_momozhen_gem() # 开始宝石工坊
-    elif gem_hour >= 23: # 可改, 目前32小时正好 1 项满
+    elif gem_hour >= 32: # 可改, 目前32小时正好 1 项满
         kf_momozhen_gem() # 领取宝石工坊
         kf_momozhen_gem() # 开始宝石工坊
     else:
