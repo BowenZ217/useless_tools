@@ -1163,7 +1163,7 @@ def kf_momozhen_beach_clear():
                 match = re.search(pattern, response_text)
                 if match:
                     value = int(match.group(1))
-                    json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "clean_result", key, value)
+                    json_data_handler.increment_value(int(value), CURRENT_MONTH, "沙滩", "clean_result", key)
     except Exception as e:
         log_message(f"解析清理沙滩结果失败: {e}", level="error")
     return
