@@ -825,8 +825,16 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     }
     mystery_keywords = "神秘属性"
     
-    min_melt_rarity = 3
-    min_melt_level = 250
+    melt_level_requirements = {
+        '3': 290,
+        '4': 200,
+        '5': 150,
+        '6': 150,
+        '7': 150,
+        '8': 0,
+        '9': 0,
+        # Extend as needed for higher rarities
+    }
     
     # Filter and collect the IDs based on rarity and level requirements
     pick_ids = []
@@ -879,7 +887,7 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
             elif mystery_keywords in attributes: # 如果是神秘装备
                 melt_ids.append(id)
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "melt_count", rarity)
-            elif int(rarity) >= min_melt_rarity and int(level) >= min_melt_level:
+            elif int(level) >= melt_level_requirements.get(rarity, 999):
                 melt_ids.append(id)
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "melt_count", rarity)
             else:
