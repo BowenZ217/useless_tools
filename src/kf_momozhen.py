@@ -1100,10 +1100,23 @@ def kf_momozhen_beach_clear():
     """
     清理沙滩
     """
-    beach_url = f"{MOMOZHEN_BASE_URL}/fyg_beach.php"
-    response_text = kf_momozhen_fyg_click("20", Referer=beach_url)
-    if response_text:
-        log_message(f"清理沙滩成功: {response_text}")
+    patterns = {
+        "蓝锻造石": r"蓝锻造石 x (\d+)",
+        "绿锻造石": r"绿锻造石 x (\d+)",
+        "金锻造石": r"金锻造石 x (\d+)",
+    }
+    try:
+        beach_url = f"{MOMOZHEN_BASE_URL}/fyg_beach.php"
+        response_text = kf_momozhen_fyg_click("20", Referer=beach_url)
+        if response_text:
+            log_message(f"清理沙滩成功: {response_text}")
+            for key, pattern in patterns.items():
+                match = re.search(pattern, response_text)
+                if match:
+                    value = int(match.group(1))
+                    json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "clean_result", key, value)
+    except Exception as e:
+        log_message(f"解析清理沙滩结果失败: {e}", level="error")
     return
 
 def kf_momozhen_wish_get_result(html_content: str):
