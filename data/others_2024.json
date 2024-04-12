@@ -2,7 +2,7 @@
     "4": {
         "level_plus": {
             "tasks_completed": {
-                "每日签到": 5,
+                "每日签到": 6,
                 "每周签到": 1
             }
         },
@@ -10,8 +10,8 @@
             "credit_added": 7223
         },
         "galcg": {
-            "credit_added": 56
+            "credit_added": 66
         }
     },
-    "total_run_count": 10
+    "total_run_count": 11
 }
