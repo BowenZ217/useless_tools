@@ -810,8 +810,15 @@ def kf_momozhen_beach_extract_data_content(data_content: str):
 def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     """
     打印 沙滩装备 并提取沙滩符合条件的 装备 (ID)
+    96. 挑战斗篷(2)
+    Lv. 216
+    ID = 118875990
+    最大护盾 +100.6% (108%)
+    附加护盾 +24191.9 (112%)
+    附加魔防 +177.1 (82%)
+    魔法减伤 +1058.4 (98%)
     """
-    
+
     # Define the minimum level requirement for each rarity
     rarity_level_requirements = {
         '3': 295,
@@ -845,6 +852,7 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
         name_pattern = r'</span>.*?<br>\s*(.*?)$'
         id_pattern = r"zbtip\('(\d+)',"
         rarity_pattern = r'url\(ys/icon/z/z\d+_(\d)\.gif\);'
+        percentage_pattern = r'\((\d+)%\)'
 
         # 使用 BeautifulSoup 解析 HTML
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -874,9 +882,12 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
             # 使用 BeautifulSoup 提取 data-content 属性，并用正则表达式作为辅助解析属性值
             data_content = button.get('data-content')
             attributes = kf_momozhen_beach_extract_data_content(data_content)
+            # 从属性文本中提取百分比数值
+            percentages = re.findall(percentage_pattern, attributes)
+            total_percentage = sum([int(percentage) for percentage in percentages])
 
             # Compiling extracted information
-            info = f"{idx}. {equipment_name}({rarity})\nLv. {level}\nID = {id}\n" + attributes + "\n"
+            info = f"{idx}. {equipment_name} ({rarity}) ({total_percentage}%)\nLv. {level}\nID = {id}\n" + attributes + "\n"
 
             if mystery_keywords in attributes:
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "神秘装备", rarity)
