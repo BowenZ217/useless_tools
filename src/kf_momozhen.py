@@ -757,6 +757,30 @@ def kf_momozhen_fyg_shop():
 # 咕咕镇的一些操作
 # ------------------------------
 
+def kf_momozhen_update_safeid():
+    """
+    更新安全码
+    """
+    global MOMOZHEN_SAFEID
+
+    try:
+        response_text = kf_momozhen_fyg_index()
+        if not response_text:
+            log_message("更新安全码失败: 读取 fyg_index 失败", level="error")
+            return False
+        # 提取安全码
+        safeid_pattern = r'&safeid=([a-zA-Z0-9]+)"'
+        safeid_match = re.search(safeid_pattern, response_text)
+        if safeid_match:
+            MOMOZHEN_SAFEID = safeid_match.group(1)
+            log_message(f"安全码更新成功: {MOMOZHEN_SAFEID}")
+            return True
+    except Exception as e:
+        log_message(f"更新安全码失败: {e}", level="error")
+        return False
+    log_message("更新安全码失败", level="error")
+    return False
+
 def kf_momozhen_beach_refresh(times: int=10):
     """
     刷新沙滩
@@ -1862,6 +1886,7 @@ def kf_momozhen_start():
     """开始执行 kf 咕咕镇 签到"""
     if not set_cookie():
         return
+    kf_momozhen_update_safeid()
     # 签到
     kf_momozhen()
     # kf_momo_test()
