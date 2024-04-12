@@ -810,13 +810,6 @@ def kf_momozhen_beach_extract_data_content(data_content: str):
 def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     """
     打印 沙滩装备 并提取沙滩符合条件的 装备 (ID)
-    96. 挑战斗篷(2)
-    Lv. 216
-    ID = 118875990
-    最大护盾 +100.6% (108%)
-    附加护盾 +24191.9 (112%)
-    附加魔防 +177.1 (82%)
-    魔法减伤 +1058.4 (98%)
     """
 
     # Define the minimum level requirement for each rarity
@@ -841,6 +834,13 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
         '8': 0,
         '9': 0,
         # Extend as needed for higher rarities
+    }
+    rarity_name_map = {
+        '1': "黑色",
+        '2': "蓝色",
+        '3': "绿色",
+        '4': "黄色",
+        '5': "红色",
     }
     
     # Filter and collect the IDs based on rarity and level requirements
@@ -887,7 +887,13 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
             total_percentage = sum([int(percentage) for percentage in percentages])
 
             # Compiling extracted information
-            info = f"{idx}. {equipment_name} ({rarity}) ({total_percentage}%)\nLv. {level}\nID = {id}\n" + attributes + "\n"
+            info = (
+                f"{idx}. {equipment_name} ({total_percentage}%)"
+                f"\n{rarity_name_map.get(rarity, 'Unknown')} ({rarity})"
+                f"\nLv. {level}"
+                f"\nID = {id}"
+                f"\n{attributes}\n"
+            )
 
             if mystery_keywords in attributes:
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "神秘装备", rarity)
