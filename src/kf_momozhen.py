@@ -795,6 +795,9 @@ def kf_momozhen_beach_refresh(times: int=10):
         if "今日强制刷新次数已达上限" in response_text:
             log_message(f"达到上限退出: {response_text}")
             break
+        if "道具不足" in response_text:
+            log_message(f"道具不足退出: {response_text}")
+            break
         log_message(f"沙滩刷新成功: {response_text}")
         kf_momozhen_fyg_beach()
         time.sleep(1)
