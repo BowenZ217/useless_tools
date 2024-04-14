@@ -636,6 +636,8 @@ def kf_momozhen_fyg_llpw():
 def kf_momozhen_fyg_beach():
     """
     模仿点击 `fyg_beach` 页面
+
+    进入沙滩页面 如果时间到了, 会自动刷新装备 (每隔 1320 分钟 = 22 小时)
     """
     path = "/fyg_beach.php"
     url = f"{MOMOZHEN_BASE_URL}{path}"
@@ -791,9 +793,37 @@ def kf_momozhen_update_safeid():
     log_message("更新安全码失败", level="error")
     return False
 
+def kf_momozhen_beach_refresh_remaining_time(html_content: str) -> int:
+    """
+    从沙滩页面提取 自动刷新 剩余时间
+    
+    :param html_content: HTML的内容作为字符串
+    :return: 剩余分钟数，如果未找到则返回 `0`
+    """
+    try:
+        # 使用 BeautifulSoup 解析 HTML
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        time_pattern = r'被冲上沙滩还有 (\d+) 分钟'
+
+        # 查找所有的 span 元素
+        spans = soup.find_all('span')
+
+        for span in spans:
+            # 提取剩余时间
+            time_match = re.search(time_pattern, span.text)
+            if time_match:
+                return int(time_match.group(1))
+    except Exception as e:
+        log_message(f"沙滩提取剩余时间失败: {e}", level="error")
+        save_string_as_file(html_content, "kf_momozhen_beach_refresh_remaining_time_fail", "kf_momozhen")
+    return 0
+
 def kf_momozhen_beach_refresh(times: int=10):
     """
-    刷新沙滩
+    手动刷新沙滩, 会重置自动刷新的倒计时 (每日上限9次)
+
+    消耗 1 个随机装备箱
 
     :param times: 刷新次数
     """
@@ -1776,11 +1806,18 @@ def kf_momozhen_process_beach():
     """
     刷新 10 次沙滩, 并 处理/领取 沙滩装备
     """
-    kf_momozhen_fyg_beach()
-    
-    # 刷新沙滩
-    kf_momozhen_beach_refresh()
-    time.sleep(1)
+    response_text = kf_momozhen_fyg_beach()
+
+    beach_remain_time = kf_momozhen_beach_refresh_remaining_time(response_text)
+    beach_min_time = 1200 # 20小时, 每次正常刷新需要 22 小时
+
+    if beach_remain_time < beach_min_time:
+        # 因为手动刷新会重置沙滩时间, 所以避免浪费时间
+        log_message(f"沙滩剩余时间不足 {beach_min_time} 分钟, 不刷新沙滩")
+    else:
+        # 刷新沙滩
+        kf_momozhen_beach_refresh()
+        time.sleep(1)
 
     # 领取沙滩装备
     kf_momozhen_beach_pick_equipment()
@@ -1797,14 +1834,16 @@ def kf_momozhen_process_gem():
     """
     kf_momozhen_fyg_gem()
 
+    min_hour = 32 # 可改, 目前32小时正好 1 项满
+
     gem_hour = kf_momozhen_gem_find_work_hours()
     if gem_hour < 1:
         kf_momozhen_gem() # 开始宝石工坊
-    elif gem_hour >= 32: # 可改, 目前32小时正好 1 项满
+    elif gem_hour >= min_hour:
         kf_momozhen_gem() # 领取宝石工坊
         kf_momozhen_gem() # 开始宝石工坊
     else:
-        log_message("宝石工坊未满 32 小时")
+        log_message(f"宝石工坊未满 {min_hour} 小时")
 
     return
 
@@ -1875,16 +1914,16 @@ def kf_momozhen():
     kf_momozhen_process_shop()
     time.sleep(1)
 
-    # 开始执行咕咕镇沙滩
-    kf_momozhen_process_beach()
-    time.sleep(1)
-
     # 开始执行咕咕镇宝石工坊
     kf_momozhen_process_gem()
     time.sleep(1)
 
     # 开始执行咕咕镇争夺
     kf_momozhen_process_battle()
+    time.sleep(1)
+
+    # 开始执行咕咕镇沙滩
+    kf_momozhen_process_beach()
     time.sleep(1)
 
     # 开始执行许愿池
