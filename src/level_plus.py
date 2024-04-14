@@ -55,7 +55,7 @@ def level_plus_tasks_page():
 
     # 发送 GET 请求
     try:
-        response = requests.get(base_url, headers=level_plus_headers)
+        response = requests.get(base_url, headers=local_headers)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"level-plus 任务页面请求失败, HTTP Error ({response.status_code}): {e}", level="error")
@@ -190,7 +190,7 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
 
     # 发送 GET 请求
     try:
-        response = requests.get(base_url, headers=level_plus_headers, params=params)
+        response = requests.get(base_url, headers=local_headers, params=params)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"领取 {task_name} 任务 失败, HTTP Error ({response.status_code}): {e}")
@@ -224,7 +224,7 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
     local_headers["Referer"] = f"https://{NORTH_PLUS_BASE_URL}/plugin.php?H_name-tasks-actions-newtasks.html.html"
     # 发送 GET 请求
     try:
-        response = requests.get(base_url, headers=level_plus_headers, params=params)
+        response = requests.get(base_url, headers=local_headers, params=params)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         log_message(f"领取 {task_name} 奖励 失败, HTTP Error ({response.status_code}): {e}")
