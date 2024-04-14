@@ -9,13 +9,14 @@ from .utils.logger import log_message
 # from .utils.file_operations import save_string_as_file
 
 CURRENT_MONTH = str(datetime.datetime.now().month)
+GALCG_BASE_URL = "www.galcg.org"
 
 galcg_headers = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
     "Content-Length": "0",
-    "Origin": "https://www.galcg.org",
+    "Origin": f"https://{GALCG_BASE_URL}",
     "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": "\"Windows\"",
@@ -39,14 +40,14 @@ def set_header():
         log_message("\n------------------------------------\n")
         return False
 
-    url = "https://www.galcg.org/wp-json/jwt-auth/v1/token"
+    url = f"https://{GALCG_BASE_URL}/wp-json/jwt-auth/v1/token"
     data = {
         "username": username,
         "password": password,
     }
     
     headers = galcg_headers.copy()
-    headers["Referer"] = "https://www.galcg.org/"
+    headers["Referer"] = f"https://{GALCG_BASE_URL}/"
     try:
         response = requests.post(url, headers=headers, data=data)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
@@ -78,7 +79,7 @@ def set_header():
         return False
         
     # reset Referer and save headers to global variable
-    headers["Referer"] = "https://www.galcg.org/mission/today"
+    headers["Referer"] = f"https://{GALCG_BASE_URL}/mission/today"
 
     galcg_headers = headers
     return True
@@ -90,7 +91,7 @@ def galcg():
     log_message("\n------------------------------------\n")
 
     # 请求签到页面相关信息, 否则无法直接请求签到接口
-    url = "https://www.galcg.org/wp-json/b2/v1/getUserInfo"
+    url = f"https://{GALCG_BASE_URL}/wp-json/b2/v1/getUserInfo"
     try:
         response = requests.post(url, headers=galcg_headers)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
@@ -102,7 +103,7 @@ def galcg():
     except Exception as e:
         log_message(f"getUserInfo 解析失败: {e}", level="error")
 
-    url = "https://www.galcg.org/wp-json/b2/v1/getLatestAnnouncement"
+    url = f"https://{GALCG_BASE_URL}/wp-json/b2/v1/getLatestAnnouncement"
     data = b'count=3'
     galcg_headers["Content-Length"] = str(len(data))
     try:
@@ -118,7 +119,7 @@ def galcg():
     except Exception as e:
         log_message(f"getLatestAnnouncement 解析失败: {e}", level="error")
 
-    url = "https://www.galcg.org/wp-json/b2/v1/getUserMission"
+    url = f"https://{GALCG_BASE_URL}/wp-json/b2/v1/getUserMission"
     data = b'count=10&paged=1'
     galcg_headers["Content-Length"] = str(len(data))
     try:
@@ -135,7 +136,7 @@ def galcg():
         log_message(f"getUserMission 解析失败: {e}", level="error")
         
 
-    url = "https://www.galcg.org/wp-json/b2/v1/getMissionList"
+    url = f"https://{GALCG_BASE_URL}/wp-json/b2/v1/getMissionList"
     data = b'count=20&paged=1&type=today&post_paged=1'
     galcg_headers["Content-Length"] = str(len(data))
     try:
@@ -157,7 +158,7 @@ def galcg():
     # 请求签到
     # ----------------------------------------------
         
-    url = "https://www.galcg.org/wp-json/b2/v1/userMission"
+    url = f"https://{GALCG_BASE_URL}/wp-json/b2/v1/userMission"
     
     try:
         response = requests.post(url, headers=galcg_headers)

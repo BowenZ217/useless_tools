@@ -13,6 +13,12 @@ from .utils.logger import log_message
 from .utils.response_processing import decompress_response
 from .utils.file_operations import save_string_as_file
 
+SAYHUAHUO_BASE_URLS = [
+    "www.sayhuahuo.xyz",
+    "www.sayhuahuo.net"
+]
+SAYHUAHUO_BASE_URL = "www.sayhuahuo.xyz"
+
 # Global variables
 sayhuahuo_headers = {
     "Accept": "*/*",
@@ -75,7 +81,7 @@ def extract_text_from_sayhuahuo(xml_data: str):
 def make_requests(action: str, times: int, base_url: str=None):
     """执行请求 action 次数 times 次。"""
     if not base_url:
-        base_url = "https://www.sayhuahuo.xyz/hanabigame-api.html"
+        base_url = f"https://{SAYHUAHUO_BASE_URL}/hanabigame-api.html"
     log_message(f"正在执行 {action} 请求 {times} 次...")
 
     url = f"{base_url}?action={action}"
@@ -125,7 +131,7 @@ def huahuoxueyuan():
     log_message("\n------------------------------------\n")
     
     # 获取 formhash
-    base_url = "https://www.sayhuahuo.xyz/dsu_paulsign-sign.html"
+    base_url = f"https://{SAYHUAHUO_BASE_URL}/dsu_paulsign-sign.html"
     
     # 尝试获取 formhash
     formhash = "a64e7183"
@@ -154,7 +160,7 @@ def huahuoxueyuan():
     # 构建签到请求
     # ------------------------------------------------
         
-    base_url = "https://www.sayhuahuo.xyz/plugin.php"
+    base_url = f"https://{SAYHUAHUO_BASE_URL}/plugin.php"
 
     params = {
         "id": "dsu_paulsign:sign",

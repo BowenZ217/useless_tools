@@ -15,6 +15,16 @@ from .utils.file_operations import save_string_as_file
 from .utils.text_analysis import contains_keywords, convert_number_to_range
 from .utils.time_utils import compute_remaining_time, compute_time_to_next_integer, calculate_total_minutes, format_remaining_time
 
+MOMOZHEN_URLS = [
+    {
+        "entry": "https://bbs.kfpromax.com/fyg_sjcdwj.php?go=play&xl=2",
+        "base": "https://www.momozhen.com"
+    },
+    {
+        "entry": "https://bbs.kfpromax.com/fyg_sjcdwj.php?go=play&xl=1",
+        "base": "https://www.guguzhen.com"
+    }
+]
 
 MOMOZHEN_ENTRY_URL = "https://bbs.kfpromax.com/fyg_sjcdwj.php?go=play&xl=2"
 MOMOZHEN_BASE_URL = "https://www.momozhen.com"
@@ -41,7 +51,7 @@ kf_momozhen_headers = {
   "Accept-Encoding": "gzip, deflate, br",
   "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
   "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-  "Origin": "https://www.momozhen.com",
+  "Origin": f"{MOMOZHEN_BASE_URL}",
   "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
   "Sec-Ch-Ua-Mobile": "?0",
   "Sec-Ch-Ua-Platform": "\"Windows\"",
@@ -1220,7 +1230,7 @@ def kf_momozhen_wish(max_attempts=100):
     if response_text:
         result = kf_momozhen_wish_get_result(response_text)
         log_message(f"许愿池请求成功: {result}")
-        save_string_as_file(response_text, "fyg_wish", "kf_momozhen")
+        # save_string_as_file(response_text, "fyg_wish", "kf_momozhen")
     
     return
 

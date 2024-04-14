@@ -10,12 +10,17 @@ from .utils.logger import log_message
 
 CURRENT_MONTH = str(datetime.datetime.now().month)
 
+VIKACG_BASE_URLS = [
+    "www.vikacg.com",
+]
+VIKACG_BASE_URL = "www.vikacg.com"
+
 vikacg_headers = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br, zstd",
     "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
     "Content-Type": "application/x-www-form-urlencoded",
-    "Origin": "https://www.vikacg.com",
+    "Origin": f"https://{VIKACG_BASE_URL}",
     "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": "\"Windows\"",
@@ -37,13 +42,13 @@ def set_header():
         log_message("请设置环墶变量 VIKACG_PASSWORD", level="error")
         return False
 
-    url = "https://www.vikacg.com/wp-json/jwt-auth/v1/token"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/jwt-auth/v1/token"
     data = {
         "username": username,
         "password": password,
     }
     headers = vikacg_headers.copy()
-    headers["Referer"] = "https://www.vikacg.com/login"
+    headers["Referer"] = f"https://{VIKACG_BASE_URL}/login"
 
     try:
         response = requests.post(url, headers=headers, data=data)
@@ -77,7 +82,7 @@ def set_header():
         return False
         
     # reset Referer and save headers to global variable
-    headers["Referer"] = "https://www.vikacg.com/wallet/mission"
+    headers["Referer"] = f"https://{VIKACG_BASE_URL}/wallet/mission"
 
     vikacg_headers = headers
 
@@ -91,7 +96,7 @@ def vikacg():
 
     
     # 请求签到页面相关信息, 否则无法直接请求签到接口
-    url = "https://www.vikacg.com/networkTest.json"
+    url = f"https://{VIKACG_BASE_URL}/networkTest.json"
     try:
         response = requests.get(url, headers=vikacg_headers)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
@@ -105,7 +110,7 @@ def vikacg():
     except Exception as e:
         log_message(f"网络测试失败: {e}", "error")
     
-    url = "https://www.vikacg.com/wp-json/b2/v1/app/collectionIndex"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/app/collectionIndex"
     data = b'count=20&paged=1'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
@@ -124,7 +129,7 @@ def vikacg():
         # Handle other errors, such as connection errors.
         log_message(f"collectionIndex Error: {e}", level="error")
     
-    url = "https://www.vikacg.com/wp-json/b2/v1/getLatestAnnouncement"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/getLatestAnnouncement"
     data = b'count=5'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
@@ -143,7 +148,7 @@ def vikacg():
         # Handle other errors, such as connection errors.
         log_message(f"getLatestAnnouncement Error: {e}", level="error")
     
-    url = "https://www.vikacg.com/wp-json/vikacg/v1/getIndex"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/vikacg/v1/getIndex"
     vikacg_headers["Content-Length"] = "0"
     try:
         response = requests.post(url, headers=vikacg_headers)
@@ -161,7 +166,7 @@ def vikacg():
         log_message(f"getIndex Error: {e}", level="error")
     
 
-    url = "https://www.vikacg.com/wp-json/b2/v1/getUserInfo"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/getUserInfo"
     vikacg_headers["Content-Length"] = "0"
     user_id = "1"
     try:
@@ -183,7 +188,7 @@ def vikacg():
         # Handle other errors, such as connection errors.
         log_message(f"getUserInfo Error: {e}", level="error")
 
-    url = "https://www.vikacg.com/wp-json/b2/v1/getStreamList"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/getStreamList"
     payload = {
         "author": user_id,
         "paged": 1,
@@ -210,7 +215,7 @@ def vikacg():
     # 可能只需要请求这个接口即可
     # ----------------------------------------------
         
-    url = "https://www.vikacg.com/wp-json/b2/v1/getUserMission"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/getUserMission"
     data = b'count=20&paged=1'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
@@ -234,7 +239,7 @@ def vikacg():
     # 请求签到
     # ----------------------------------------------
         
-    url = "https://www.vikacg.com/wp-json/b2/v1/userMission"
+    url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/userMission"
     try:
         response = requests.post(url, headers=vikacg_headers)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)

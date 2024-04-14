@@ -9,11 +9,13 @@ from bs4 import BeautifulSoup
 from .utils.logger import log_message
 from .utils.file_operations import save_string_as_file
 
+KF_FEIYUE_BASE_URL = "bbs.kfpromax.com"
+
 kf_feiyue_headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Referer": "https://bbs.kfpromax.com/kf_growup.php",
+    "Referer": f"https://{KF_FEIYUE_BASE_URL}/kf_growup.php",
     "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": "\"Windows\"",
@@ -51,7 +53,7 @@ def kf_feiyue_extract_sucess_page(html_str: str):
 
 def kf_feiyue_request_kf_growup() -> str:
     # 请求的基本 URL
-    base_url = "https://bbs.kfpromax.com/kf_growup.php"
+    base_url = f"https://{KF_FEIYUE_BASE_URL}/kf_growup.php"
 
     # 发送 GET 请求
     try:
@@ -114,7 +116,7 @@ def kf_feiyue():
 
     # 对于找到的每个匹配项, 提取并打印href属性
     for a_tag in a_tags:
-        url = "https://bbs.kfpromax.com/" + a_tag['href']
+        url = f"https://{KF_FEIYUE_BASE_URL}/" + a_tag['href']
         
         kf_feiyue_request_checkin(url)
 

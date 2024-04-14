@@ -13,14 +13,17 @@ from .utils.text_analysis import contains_keywords
 
 CURRENT_MONTH = str(datetime.datetime.now().month)
 
+NORTH_PLUS_BASE_URLS = [
+    "www.south-plus.net",
+    "www.north-plus.net",
+    "www.level-plus.net"
+] # 不过每个 cookie 只能在对应的站点使用, 并且登录需要 验证码
+NORTH_PLUS_BASE_URL = "www.level-plus.net"
+
 level_plus_headers = {
-    "authority": "www.level-plus.net",
-    "method": "GET",
-    "scheme": "https",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Referer": "https://www.level-plus.net/plugin.php?H_name-tasks.html.html",
     "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": "\"Windows\"",
@@ -46,7 +49,9 @@ def level_plus_tasks_page():
     请求 level-plus 任务页面, 并返回 HTML 内容。
     """
     # 请求的基本 URL
-    base_url = "https://www.level-plus.net/plugin.php?H_name-tasks.html"
+    base_url = f"https://{NORTH_PLUS_BASE_URL}/plugin.php?H_name-tasks.html"
+    local_headers = level_plus_headers.copy()
+    local_headers["Referer"] = f"https://{NORTH_PLUS_BASE_URL}"
 
     # 发送 GET 请求
     try:
@@ -163,7 +168,7 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
     keywords = ["是不开放", "还没超过"]
 
     # 请求的基本 URL
-    base_url = "https://www.level-plus.net/plugin.php"
+    base_url = f"https://{NORTH_PLUS_BASE_URL}/plugin.php"
 
     log_message(f"开始 {task_name} 任务")
 
@@ -179,6 +184,9 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
         "nowtime": nowtime,
         "verify": verifyhash
     }
+
+    local_headers = level_plus_headers.copy()
+    local_headers["Referer"] = f"https://{NORTH_PLUS_BASE_URL}/plugin.php?H_name-tasks.html"
 
     # 发送 GET 请求
     try:
@@ -213,6 +221,7 @@ def level_plus_single_task(cid, verifyhash: str, task_name: str=None):
         "nowtime": nowtime,
         "verify": verifyhash
     }
+    local_headers["Referer"] = f"https://{NORTH_PLUS_BASE_URL}/plugin.php?H_name-tasks-actions-newtasks.html.html"
     # 发送 GET 请求
     try:
         response = requests.get(base_url, headers=level_plus_headers, params=params)
