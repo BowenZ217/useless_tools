@@ -554,8 +554,8 @@ def kf_momozhen_fyg_index():
         return ""
     
     # 页面的额外信息
-    kf_momozhen_fyg_read("22", url) # 当前出战人物，光环，争夺狗牌数量
-    kf_momozhen_fyg_read("10", url) # 翻牌信息
+    kf_momozhen_fyg_read("22", Referer=url) # 当前出战人物，光环，争夺狗牌数量
+    kf_momozhen_fyg_read("10", Referer=url) # 翻牌信息
     return response.text
 
 def kf_momozhen_fyg_stat():
@@ -657,9 +657,9 @@ def kf_momozhen_fyg_beach():
         return ""
     
     # 页面的额外信息
-    kf_momozhen_fyg_read("1", url) # 沙滩装备信息
-    kf_momozhen_fyg_read("2", url) # 仓库装备信息
-    kf_momozhen_fyg_read("9", url) # 当前出战人物 具体信息
+    kf_momozhen_fyg_read("1", Referer=url) # 沙滩装备信息
+    kf_momozhen_fyg_read("2", Referer=url) # 仓库装备信息
+    kf_momozhen_fyg_read("9", Referer=url) # 当前出战人物 具体信息
     return response.text
 
 def kf_momozhen_fyg_pk():
@@ -684,8 +684,8 @@ def kf_momozhen_fyg_pk():
         return ""
     
     # 页面的额外信息
-    kf_momozhen_fyg_read("12", url) # 当前 出击 具体信息
-    kf_momozhen_fyg_read("25", url) # 当前 出击 历史信息
+    kf_momozhen_fyg_read("12", Referer=url) # 当前 出击 具体信息
+    kf_momozhen_fyg_read("25", Referer=url) # 当前 出击 历史信息
 
     return response.text
 
@@ -734,7 +734,7 @@ def kf_momozhen_fyg_gem():
         return ""
     
     # 页面的额外信息
-    kf_momozhen_fyg_read("21", url) # 宝石工坊 进度信息
+    kf_momozhen_fyg_read("21", Referer=url) # 宝石工坊 进度信息
     
     return response.text
 
@@ -760,8 +760,8 @@ def kf_momozhen_fyg_shop():
         return ""
     
     # 页面的额外信息
-    kf_momozhen_fyg_read("16", url) # 骰子战争等级 + {星晶/星沙/贝壳} 数量
-    kf_momozhen_fyg_read("17", url) # 商店 对账信息
+    kf_momozhen_fyg_read("16", Referer=url) # 骰子战争等级 + {星晶/星沙/贝壳} 数量
+    kf_momozhen_fyg_read("17", Referer=url) # 商店 对账信息
     return response.text
 
 
@@ -1174,7 +1174,7 @@ def kf_momozhen_beach_pick_equipment():
     领取沙滩装备
     """
     beach_url = f"{MOMOZHEN_BASE_URL}/fyg_beach.php"
-    response_text = kf_momozhen_fyg_read("1", beach_url)
+    response_text = kf_momozhen_fyg_read("1", Referer=beach_url)
     time.sleep(1)
     if response_text:
         log_message(f"分析沙滩装备: \n")
@@ -1368,7 +1368,7 @@ def kf_momozhen_gem_find_work_hours() -> int:
     If no such information is found, returns 0.
     """
     gen_url = f"{MOMOZHEN_BASE_URL}/fyg_gem.php"
-    response_text = kf_momozhen_fyg_read("21", gen_url)
+    response_text = kf_momozhen_fyg_read("21", Referer=gen_url)
 
     if not response_text:
         return 0
@@ -1470,7 +1470,7 @@ def kf_momozhen_find_SVIP() -> str:
     If no such text is found, returns an empty string.
     """
     index_url = f"{MOMOZHEN_BASE_URL}/fyg_index.php"
-    response_text = kf_momozhen_fyg_read("10", index_url)
+    response_text = kf_momozhen_fyg_read("10", Referer=index_url)
 
     if not response_text:
         return ""
@@ -1493,7 +1493,7 @@ def kf_momozhen_card_value():
     """
     # 
     index_url = f"{MOMOZHEN_BASE_URL}/fyg_index.php"
-    response_text = kf_momozhen_fyg_read("10", index_url) # 翻牌信息
+    response_text = kf_momozhen_fyg_read("10", Referer=index_url) # 翻牌信息
 
     blue, green, yellow, red = 0, 0, 0, 0
 
