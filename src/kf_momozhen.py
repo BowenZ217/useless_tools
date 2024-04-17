@@ -968,7 +968,7 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
             if int(level) >= rarity_level_requirements.get(rarity, 999):
                 pick_ids.append(id)
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "pick_count", rarity)
-            elif mystery_keywords in attributes: # 如果是神秘装备
+            elif mystery_keywords in attributes and int(rarity) >= 3: # 如果是神秘装备
                 melt_ids.append(id)
                 json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩", "melt_count", rarity)
             elif int(level) >= melt_level_requirements.get(rarity, 999):
