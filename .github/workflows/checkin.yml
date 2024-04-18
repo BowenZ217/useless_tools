@@ -37,6 +37,7 @@ jobs:
           GALCG_PASSWORD: ${{ secrets.GALCG_PASSWORD }}
           JMCOMIC_USERNAME: ${{ secrets.JMCOMIC_USERNAME }}
           JMCOMIC_PASSWORD: ${{ secrets.JMCOMIC_PASSWORD }}
+          ZODGAME_COOKIE: ${{ secrets.ZODGAME_COOKIE }}
         run: |
           python main.py
 
