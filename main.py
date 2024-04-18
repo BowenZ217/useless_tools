@@ -3,7 +3,7 @@ import time
 
 # 引用 src 包下的模块
 from src.utils import logger, json_data_handler
-from src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic
+from src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic, zodgame
 # from src import kf_momozhen_backup_1
 
 def main():
@@ -31,6 +31,9 @@ def main():
 
     # galcg 签到
     galcg.galcg_start()
+
+    # zodgame 签到
+    zodgame.zodgame_start()
 
     # jmcomic 签到
     jmcomic.jmcomic_start()
