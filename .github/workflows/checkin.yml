@@ -54,6 +54,7 @@ jobs:
             level_plus/
             vikacg/
             galcg/
+            zodgame/
 
       - name: Configure Git
         run: |
