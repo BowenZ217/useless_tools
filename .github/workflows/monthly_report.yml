@@ -1,0 +1,41 @@
+name: Monthly Report Generation
+
+on:
+    schedule:
+        - cron: '0 10 1 * *'  # 每月第一天的 10:00
+    workflow_dispatch:
+
+permissions: # 设置整个工作流程的权限
+  contents: write # 赋予对仓库内容的写权限
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run script to generate report
+        run: |
+          python scripts/gene_report.py
+    
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit and push report
+        run: |
+          git add reports/*.md
+          git commit -m "Automated report update"
+          if git diff --staged --quiet; then
+              echo "No changes to commit"
+          else
+              git push
+          fi
