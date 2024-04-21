@@ -1454,7 +1454,7 @@ def kf_momozhen_use_energy():
     index_url = f"{MOMOZHEN_BASE_URL}/fyg_index.php"
     response_text = kf_momozhen_fyg_click("13", id="2", Referer=index_url) # 'c=13&id=2&safeid=5cda2b'
 
-    keywords = ["无法使用"]
+    keywords = ["无法使用", "物品不足"]
     
     log_message(f"使用体力药水: {response_text}")
     if contains_keywords(response_text, keywords):
