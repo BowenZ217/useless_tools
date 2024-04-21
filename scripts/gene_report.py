@@ -41,6 +41,12 @@ def init_data():
 # helper functions
 # ----------------------------------------------
 
+def clear_file(filename):
+    """清空文件内容"""
+    # 使用'w'模式打开文件，这将清空文件内容
+    with open(filename, 'w') as file:
+        pass  # 打开文件后不做任何操作，自动清空内容
+
 def merge_data(data1, data2):
     """合并两个数据字典"""
     for key in data2:
@@ -74,7 +80,7 @@ def generate_report(kf_momozhen_data, others_data):
         file.write("### kf 绯月 (咕咕镇) 数据\n\n")
         file.write("#### 争夺战场\n\n")
         file.write("##### 出击情况\n\n")
-        file.write(f"使用体力药水: {kf_momozhen_data['使用体力药水']['次数']} 次\n\n")
+        file.write(f"使用 `体力药水`: {kf_momozhen_data['使用体力药水']['次数']} 次\n\n")
         file.write(f"胜利次数: {kf_momozhen_data['battle']['win_count']}\n\n")
         file.write(f"败北次数: {kf_momozhen_data['battle']['lose_count']}\n\n")
         file.write(f"平局次数: {kf_momozhen_data['battle']['draw_count']}\n\n")
@@ -175,6 +181,8 @@ def main():
     if not init_data():
         print("初始化数据失败")
         return
+    
+    clear_file(REPORT_FILE_PATH)
     generate_current_year_report()
     return
 
