@@ -80,64 +80,68 @@ def generate_report(kf_momozhen_data, others_data):
         file.write("### kf 绯月 (咕咕镇) 数据\n\n")
         file.write("#### 争夺战场\n\n")
         file.write("##### 出击情况\n\n")
-        file.write(f"使用 `体力药水`: {kf_momozhen_data['使用体力药水']['次数']} 次\n\n")
-        file.write(f"胜利次数: {kf_momozhen_data['battle']['win_count']}\n\n")
-        file.write(f"败北次数: {kf_momozhen_data['battle']['lose_count']}\n\n")
-        file.write(f"平局次数: {kf_momozhen_data['battle']['draw_count']}\n\n")
+        file.write(f"使用 `体力药水`: {kf_momozhen_data.get('使用体力药水', {}).get('次数', 0)} 次\n\n")
+        file.write(f"胜利次数: {kf_momozhen_data.get('battle', {}).get('win_count', 0)}\n\n")
+        file.write(f"败北次数: {kf_momozhen_data.get('battle', {}).get('lose_count', 0)}\n\n")
+        file.write(f"平局次数: {kf_momozhen_data.get('battle', {}).get('draw_count', 0)}\n\n")
+
         file.write("##### 翻牌情况\n\n")
         file.write("###### 次数统计\n\n")
-        for key, count in kf_momozhen_data["翻牌"]["次数统计"].items():
+        for key, count in kf_momozhen_data.get("翻牌", {}).get("次数统计", {}).items():
             file.write(f"`{key}` : {count} 次\n\n")
         file.write("###### 奖励统计\n\n")
-        for key, count in kf_momozhen_data["翻牌"]["奖励"].items():
+        for key, count in kf_momozhen_data.get("翻牌", {}).get("奖励", {}).items():
             file.write(f"`{key}` : {count}\n\n")
 
         file.write("#### 我的沙滩 (装备)\n\n")
         file.write("##### 神秘装备\n\n")
-        for key, count in kf_momozhen_data["沙滩"]["神秘装备"].items():
+        for key, count in kf_momozhen_data.get("沙滩", {}).get("神秘装备", {}).items():
             file.write(f"出现 `{rarity_name_map[key]}` 神秘装备 {count} 件\n\n")
 
         # 写入领取信息
         file.write("##### 领取\n\n")
-        for key, count in kf_momozhen_data["沙滩"]["pick_count"].items():
+        for key, count in kf_momozhen_data.get("沙滩", {}).get("pick_count", {}).items():
             file.write(f"`{rarity_name_map[key]}` 装备 {count} 件\n\n")
 
         # 写入熔炼信息
         file.write("##### 熔炼\n\n")
-        for key, count in kf_momozhen_data["沙滩"]["melt_count"].items():
+        for key, count in kf_momozhen_data.get("沙滩", {}).get("melt_count", {}).items():
             file.write(f"`{rarity_name_map[key]}` 装备 {count} 件\n\n")
         file.write("收获护符:\n\n")
-        for charm, levels in kf_momozhen_data["护符信息"].items():
+        for charm, levels in kf_momozhen_data.get("护符信息", {}).items():
             for level, number in levels.items():
-                file.write(f"`{charm}` (+ {level}) {number} 个\n\n")
+                file.write(f"{number} 个 `{charm}` (+ {level})\n\n")
 
         # 写入清理信息
         file.write("##### 清理\n\n")
-        for key, count in kf_momozhen_data["沙滩"]["clean_count"].items():
+        for key, count in kf_momozhen_data.get("沙滩", {}).get("clean_count", {}).items():
             file.write(f"`{rarity_name_map[key]}` 装备 {count} 件\n\n")
         file.write("清理得到:\n\n")
-        for item, amount in kf_momozhen_data["沙滩"]["clean_result"].items():
+        for item, amount in kf_momozhen_data.get("沙滩", {}).get("clean_result", {}).items():
             file.write(f"{amount} 个 `{item}`\n\n")
 
         file.write("#### 宝石工坊\n\n")
-        for key, count in kf_momozhen_data["宝石工坊"]["奖励"].items():
+        for key, count in kf_momozhen_data.get("宝石工坊", {}).get("奖励", {}).items():
             file.write(f"`{key}` : {count}\n\n")
 
         file.write("#### 许愿池\n\n")
-        for key, count in kf_momozhen_data["许愿池"]["词条次数"].items():
+        for key, count in kf_momozhen_data.get("许愿池", {}).get("词条次数", {}).items():
             file.write(f"{count} 次 `{key}`\n\n")
 
 
         file.write("### level-plus 数据\n\n")
         file.write("#### 完成任务\n\n")
-        for key, count in others_data["level_plus"]["tasks_completed"].items():
+        for key, count in others_data.get("level_plus", {}).get("tasks_completed", {}).items():
             file.write(f"`{key}` : {count} 次\n\n")
 
         file.write("### vikacg 数据\n\n")
-        file.write(f"签到获得 {others_data['vikacg']['credit_added']} 积分\n\n")
+        file.write(f"签到获得 {others_data.get('vikacg', {}).get('credit_added', 0)} `积分`\n\n")
 
         file.write("### galcg 数据\n\n")
-        file.write(f"签到获得 {others_data['galcg']['credit_added']} 积分\n\n")
+        file.write(f"签到获得 {others_data.get('galcg', {}).get('credit_added', 0)} `积分`\n\n")
+
+        file.write("### zodgame 数据\n\n")
+        file.write(f"签到获得 {others_data.get('zodgame', {}).get('酱油', 0)} 瓶 `酱油`\n\n")
     return
 
 def generate_current_year_report():
