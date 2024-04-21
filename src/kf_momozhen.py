@@ -894,10 +894,10 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     
     melt_level_requirements = {
         '3': 290,
-        '4': 200,
-        '5': 150,
-        '6': 150,
-        '7': 150,
+        '4': 100,
+        '5': 0,
+        '6': 0,
+        '7': 0,
         '8': 0,
         '9': 0,
         # Extend as needed for higher rarities
