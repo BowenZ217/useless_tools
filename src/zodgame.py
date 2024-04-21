@@ -1,3 +1,4 @@
+import datetime
 import os
 import random
 import re
@@ -6,9 +7,11 @@ import requests
 from bs4 import BeautifulSoup
 
 
+from .utils import json_data_handler
 from .utils.logger import log_message
 from .utils.file_operations import save_string_as_file
 
+CURRENT_MONTH = str(datetime.datetime.now().month)
 ZODGAME_BASE_URL = "zodgame.xyz"
 ZODGAME_FORMHASH = "417c75e4"
 
@@ -119,6 +122,40 @@ def zodgame_extract_sign_in_info(html_str: str):
 
     return result
 
+def zodgame_extract_sign_in(response_text: str) -> int:
+    """
+    从签到页面提取签到信息, 并返回酱油的数量
+    如果没有找到数量, 则返回 0
+    """
+    try:
+        # 首先检查响应中是否包含某些关键字, 并记录相关信息
+        if "已被系统拒绝" in response_text:
+            log_message('zodgame 的 cookie 已过期')
+            return 0
+        elif "恭喜" in response_text:
+            log_message("zodgame 签到成功")
+        elif '已经签到' in response_text:
+            log_message('zodgame 已经签到了')
+            return 0
+        else:
+            log_message(f'zodgame 签到失败: {response_text}')
+            return 0
+        
+        num_pattern = r'酱油 (\d+) 瓶'
+        
+        # 提取酱油数量
+        match = re.search(num_pattern, response_text)
+        if match:
+            num = int(match.group(1))
+            log_message(f"领取酱油数量: {num} 瓶")
+            return num
+        else:
+            log_message(f"没有找到酱油数量信息")
+    except Exception as e:
+        # 记录异常信息
+        log_message(f'在提取签到信息时发生错误: {str(e)}')
+    return 0
+
 # ------------------------------
 # zodgame 的一些请求接口
 # ------------------------------
@@ -208,14 +245,13 @@ def zodgame_sign_in_page():
 # zodgame 的一些操作
 # ------------------------------
 
-def zodgame():
-    log_message("\n------------------------------------\n")
-    log_message("开始执行 zodgame 函数")
-    log_message("\n------------------------------------\n")
+def zodgame_process_earn_points():
     response_text = zodgame_earn_points_page()
     # 保存页面内容, 以备分析
     save_string_as_file(response_text, "zodgame_earn_points_page", "zodgame")
+    return
 
+def zodgame_process_sign_in():
     # 准备签到
     response_text = zodgame_sign_in_page()
     zodgame_update_formhash(response_text)
@@ -230,8 +266,8 @@ def zodgame():
     elif '已经签到' in response_text:
         log_message('zodgame 已经签到了')
     else:
-        log_message(f'zodgame 签到失败: {response_text}')
-    save_string_as_file(response_text, "zodgame_sign_in", "zodgame")
+        log_message(f'zodgame 签到失败')
+        save_string_as_file(response_text, "zodgame_sign_in_fail", "zodgame")
 
     response_text = zodgame_sign_in_page()
     sign_in_info_new = zodgame_extract_sign_in_info(response_text)
@@ -244,6 +280,18 @@ def zodgame():
                     f"本次获得的奖励: {sign_in_info['last_reward']}\n"
                     f"距离升级还需签到: {sign_in_info_new['remaining_days']} 天\n"
         )
+        json_data_handler.increment_value(sign_in_info_new['last_reward'], CURRENT_MONTH, "zodgame", "酱油")
+    return
+
+def zodgame():
+    log_message("\n------------------------------------\n")
+    log_message("开始执行 zodgame 函数")
+    log_message("\n------------------------------------\n")
+    
+    zodgame_process_earn_points()
+
+    zodgame_process_sign_in()
+
     
     log_message("\n------------------------------------\n")
     
@@ -258,7 +306,13 @@ def zodgame_start():
     if not set_cookie():
         return
     
+    current_year = datetime.datetime.now().year
+    json_path = f"./data/others_{current_year}.json"
+    json_data_handler.set_data_file_path(json_path)
+
     # 签到
     zodgame()
+
+    json_data_handler.write_data()
 
     return
