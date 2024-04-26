@@ -2,7 +2,7 @@
     "4": {
         "level_plus": {
             "tasks_completed": {
-                "每日签到": 19,
+                "每日签到": 20,
                 "每周签到": 3
             }
         },
@@ -10,11 +10,11 @@
             "credit_added": 25636
         },
         "galcg": {
-            "credit_added": 227
+            "credit_added": 241
         },
         "zodgame": {
             "酱油": 26
         }
     },
-    "total_run_count": 42
+    "total_run_count": 43
 }
