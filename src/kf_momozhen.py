@@ -9,7 +9,7 @@ from typing import Callable
 import requests
 from bs4 import BeautifulSoup
 
-from .utils import json_data_handler
+from .utils import json_data_handler, momozhen_collect_data
 from .utils.logger import log_message
 from .utils.file_operations import save_string_as_file
 from .utils.text_analysis import contains_keywords, convert_number_to_range
@@ -866,17 +866,27 @@ def kf_momozhen_beach_extract_data_content(data_content: str):
 
             formatted_texts.append(p.get_text(separator=" ", strip=True))
 
-        # 将所有处理后的文本用换行符连接起来
-        return "\n".join(formatted_texts)
+        return formatted_texts
     except Exception as e:
         log_message(f"解析装备属性失败: {e}", level="error")
-        attributes_text = ""
+        attributes_text = [""]
 
     return attributes_text
 
 def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
     """
     打印 沙滩装备 并提取沙滩符合条件的 装备 (ID)
+
+    装备的颜色与装备属性值 (右侧的百分数之和) 有关, 一共4条属性+1条神秘属性, 每个属性值50%-150%，神秘=100%, 那么其和最低200%, 最高700%。
+
+    根据收集的数据显示：
+
+    颜色	前缀	属性值范围
+    黑色	普通	200%-320%
+    蓝色	幸运	321%-418%
+    绿色	稀有	419%-515%
+    黄色	史诗	516%-584%
+    红色	传奇	585%-700%
     """
 
     # Define the minimum level requirement for each rarity
@@ -948,10 +958,23 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
 
             # 使用 BeautifulSoup 提取 data-content 属性，并用正则表达式作为辅助解析属性值
             data_content = button.get('data-content')
-            attributes = kf_momozhen_beach_extract_data_content(data_content)
+            attributes_list = kf_momozhen_beach_extract_data_content(data_content)
+            attributes = "\n".join(attributes_list)
             # 从属性文本中提取百分比数值
             percentages = re.findall(percentage_pattern, attributes)
             total_percentage = sum([int(percentage) for percentage in percentages])
+            if mystery_keywords in attributes:
+                total_percentage += 100
+            
+            equity_data = {
+                "name": equipment_name,
+                "rarity": rarity_name_map.get(rarity, 'Unknown'),
+                "total_percentage": total_percentage,
+                "level": int(level),
+                "id": id,
+                "attributes": attributes_list,
+            }
+            momozhen_collect_data.add_equity_data(equity_data)
 
             # Compiling extracted information
             info = (
@@ -979,8 +1002,10 @@ def kf_momozhen_beach_extract_and_print_equipment(html_content: str):
             
             # Printing the information for each equipment
             log_message(info)
-            level_range = convert_number_to_range(level, 20)
-            json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩装备", equipment_name, rarity, level_range)
+            # level_range = convert_number_to_range(level, 20)
+            # json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩装备", equipment_name, rarity, level_range)
+            # total_percentage_range = convert_number_to_range(total_percentage, 5)
+            # json_data_handler.increment_value(1, CURRENT_MONTH, "沙滩装备", "总属性", rarity, total_percentage_range)
     except Exception as e:
         log_message(f"打印沙滩装备失败: {e}", level="error")
         save_string_as_file(html_content, "kf_momozhen_beach_print_fail", "kf_momozhen")
@@ -1909,6 +1934,7 @@ def kf_momozhen():
     current_year = datetime.datetime.now().year
     json_path = f"./data/kf_momozhen_{current_year}.json"
     json_data_handler.set_data_file_path(json_path)
+    momozhen_collect_data.load_data()
 
     # 开始执行咕咕镇签到
     kf_momozhen_process_shop()
@@ -1930,6 +1956,7 @@ def kf_momozhen():
     kf_momozhen_process_wish()
 
     json_data_handler.write_data()
+    momozhen_collect_data.save_data()
     
     log_message("\n------------------------------------\n")
 
