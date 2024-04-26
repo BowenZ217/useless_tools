@@ -15,7 +15,7 @@ VIKACG_BASE_URLS = [
 ]
 VIKACG_BASE_URL = "www.vikacg.com"
 
-TIME_OUT_TIME = 30  # seconds
+TIME_OUT_TIME = 10  # seconds
 
 vikacg_headers = {
     "Accept": "application/json, text/plain, */*",
@@ -230,12 +230,15 @@ def vikacg():
     except requests.HTTPError as e:
         # Handle HTTP errors
         log_message(f"getUserMission HTTP Error ({response.status_code}): {e}", level="error")
+        return False
     except requests.RequestException as e:
         # 处理HTTP错误
         log_message(f"getUserMission Request Error: {e}", level="error")
+        return False
     except Exception as e:
         # Handle other errors, such as connection errors.
         log_message(f"getUserMission Error: {e}", level="error")
+        return False
 
     # ----------------------------------------------
     # 请求签到

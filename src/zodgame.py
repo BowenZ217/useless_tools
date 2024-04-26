@@ -15,6 +15,8 @@ CURRENT_MONTH = str(datetime.datetime.now().month)
 ZODGAME_BASE_URL = "zodgame.xyz"
 ZODGAME_FORMHASH = "417c75e4"
 
+TIME_OUT_TIME = 10  # seconds
+
 ZODGAME_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/",
     "Accept-Encoding": "gzip, deflate, br",
@@ -176,7 +178,7 @@ def zodgame_sign_in(mood_id: str):
         "qdxq": mood_id
     }
     try:
-        response = requests.post(url, headers=ZODGAME_HEADERS, data=data)
+        response = requests.post(url, headers=ZODGAME_HEADERS, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 zodgame_sign_in({mood_id}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
@@ -205,7 +207,7 @@ def zodgame_earn_points_page():
     """
     url = f"https://{ZODGAME_BASE_URL}/plugin.php?id=jnbux"
     try:
-        response = requests.get(url, headers=ZODGAME_HEADERS)
+        response = requests.get(url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 zodgame_earn_points_page 失败 HTTP Error ({response.status_code}): {e}", level="error")
@@ -225,7 +227,7 @@ def zodgame_sign_in_page():
     """
     url = f"https://{ZODGAME_BASE_URL}/plugin.php?id=dsu_paulsign:sign"
     try:
-        response = requests.get(url, headers=ZODGAME_HEADERS)
+        response = requests.get(url, headers=ZODGAME_HEADERS,timeout=TIME_OUT_TIME)
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求 zodgame_sign_in_page 失败 HTTP Error ({response.status_code}): {e}", level="error")

@@ -23,6 +23,8 @@ JMCOMIC_USERNAME = None
 JMCOMIC_PASSWORD = None
 JMCOMIC_CURRENT_TS = None
 
+TIME_OUT_TIME = 10  # seconds
+
 class JmCryptoTool:
     """
     禁漫加解密相关逻辑
@@ -175,7 +177,7 @@ def set_cookie():
         url = f"https://{domain}/setting"
         JMCOMIC_HEADERS["Host"] = domain
         try:
-            response = requests.post(url, headers=JMCOMIC_HEADERS)
+            response = requests.post(url, headers=JMCOMIC_HEADERS, timeout=TIME_OUT_TIME)
             response.raise_for_status()
             cookies = response.cookies.get_dict()
             if cookies:
@@ -216,7 +218,7 @@ def jmcomic_login():
         data = f"username={JMCOMIC_USERNAME}&password={JMCOMIC_PASSWORD}&"
         local_headers["Content-Type"] = "application/x-www-form-urlencoded"
         local_headers["Content-Length"] = str(len(data))
-        response = requests.post(url, headers=local_headers, data=data)
+        response = requests.post(url, headers=local_headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()
         resp_data = response.json()["data"]
         decoded_resp_data = JmCryptoTool.decode_resp_data(resp_data, JMCOMIC_CURRENT_TS)
@@ -237,7 +239,7 @@ def jmcomic_get_daily_id():
     global JMCOMIC_DAILY_ID
     try:
         url = f"{JMCOMIC_API_BASE_URL}/daily?user_id={JMCOMIC_USER_ID}"
-        response = requests.get(url, headers=JMCOMIC_HEADERS)
+        response = requests.get(url, headers=JMCOMIC_HEADERS, timeout=TIME_OUT_TIME)
         response.raise_for_status()
         resp_data = response.json()["data"]
         decoded_resp_data = JmCryptoTool.decode_resp_data(resp_data, JMCOMIC_CURRENT_TS)
@@ -256,7 +258,7 @@ def jmcomic_check_in():
         data = f"user_id={JMCOMIC_USER_ID}&daily_id={JMCOMIC_DAILY_ID}&"
         local_headers["Content-Type"] = "application/x-www-form-urlencoded"
         local_headers["Content-Length"] = str(len(data))
-        response = requests.post(url, headers=local_headers, data=data)
+        response = requests.post(url, headers=local_headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()
         resp_data = response.json()["data"]
         decoded_resp_data = JmCryptoTool.decode_resp_data(resp_data, JMCOMIC_CURRENT_TS)
