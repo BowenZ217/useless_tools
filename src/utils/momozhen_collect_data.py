@@ -2,6 +2,7 @@ import datetime
 import os
 import pickle
 
+CURRENT_DAY = str(datetime.datetime.now().day)
 CURRENT_MONTH = str(datetime.datetime.now().month)
 CURRENT_YEAR = str(datetime.datetime.now().year)
 
@@ -74,3 +75,19 @@ def add_equity_data(equity_data: dict):
     if 'equity_data' not in KF_MOMOZHEN_DATA:
         KF_MOMOZHEN_DATA['equity_data'] = []
     KF_MOMOZHEN_DATA['equity_data'].append(equity_data)
+
+def add_user_info(user_info: dict):
+    """
+    Add user info to momozhen data
+
+    :param user_info: dict
+
+    KF_MOMOZHEN_DATA['user_info'] = {
+        "1": user_info_day_1
+    }
+    """
+    global KF_MOMOZHEN_DATA
+    if 'user_info' not in KF_MOMOZHEN_DATA:
+        KF_MOMOZHEN_DATA['user_info'] = {}
+    if CURRENT_DAY not in KF_MOMOZHEN_DATA['user_info']:
+        KF_MOMOZHEN_DATA['user_info'][CURRENT_DAY] = user_info

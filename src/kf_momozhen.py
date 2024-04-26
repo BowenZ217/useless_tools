@@ -1921,6 +1921,47 @@ def kf_momozhen_test_dice_war():
         save_string_as_file(response_text, f"dice_war_{i}", "kf_momozhen")
         time.sleep(1)
 
+def kf_momozhen_parse_user_info(html_content):
+    try:
+        # 使用BeautifulSoup解析HTML内容
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # 提取段位
+        rank = soup.find('p', {'class': 'fyg_lh40 with-padding bg-danger'}).span.text.strip()
+
+        # 提取等级
+        user_level = int(soup.find('p', {'class': 'fyg_lh40 with-padding bg-success'}).span.text.strip())
+
+        # 判断BVIP和SVIP状态
+        # 我们假定如果天数大于0，则用户为VIP
+        bvip_days = int(soup.find('p', {'class': 'with-padding hl-warning'}).span.text.split('天')[0])
+        svip_days = int(soup.find('p', {'class': 'with-padding hl-danger'}).span.text.split('天')[0])
+
+        bvip = bvip_days > 0
+        svip = svip_days > 0
+    except Exception as e:
+        log_message(f"解析用户信息时出错: {e}", level="error")
+        rank = "Unknown"
+        user_level = -1
+        bvip = False
+        svip = False
+        
+    return {
+        'rank': rank,
+        'user_level': user_level,
+        'BVIP': bvip,
+        'SVIP': svip
+    }
+
+def kf_momozhen_add_user_info():
+    """
+    添加用户信息到 json 数据
+    """
+    response_text = kf_momozhen_fyg_index()
+    user_info = kf_momozhen_parse_user_info(response_text)
+    momozhen_collect_data.add_user_info(user_info)
+    return
+
 # ------------------------------
 # 主函数
 # ------------------------------
@@ -1936,6 +1977,9 @@ def kf_momozhen():
     json_data_handler.set_data_file_path(json_path)
     momozhen_collect_data.load_data()
 
+    kf_momozhen_add_user_info()
+    time.sleep(1)
+    
     # 开始执行咕咕镇签到
     kf_momozhen_process_shop()
     time.sleep(1)
