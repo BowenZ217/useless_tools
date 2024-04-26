@@ -64,5 +64,6 @@ jobs:
       - name: Commit and Push changes
         run: |
           git add data/*.json # 添加 data 文件夹下所有的 .json 文件
+          git add data/*.pkl # 添加 data 文件夹下所有的 .pkl 文件
           git commit -m "Automatically update JSON files in data folder" || echo "No changes to commit."
           git push
