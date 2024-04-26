@@ -31,9 +31,9 @@ VIKACG_AUTHOR_POST_MAX_PAGE = 1
 SAVING_PATH = "vikacg_posts"
 
 VIKACG_SAVEING_ID = """
-188226
-191942
-195786
+123456
+234567
+345678
 """
 
 vikacg_headers = {
@@ -784,10 +784,6 @@ def main():
     # vikacg_delete_all_user_draft_post()
     # vikacg_delete_all_user_circle()
     vikacg_delete_all_user_comment()
-
-    # comment_id = "210968"
-    # res = vikacg_delete_comment(comment_id)
-    # print(f"删除评论 {comment_id} 结果: {res}")
 
 if __name__ == "__main__":
     main()

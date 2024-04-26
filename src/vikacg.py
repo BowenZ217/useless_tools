@@ -15,6 +15,8 @@ VIKACG_BASE_URLS = [
 ]
 VIKACG_BASE_URL = "www.vikacg.com"
 
+TIME_OUT_TIME = 30  # seconds
+
 vikacg_headers = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br, zstd",
@@ -51,7 +53,7 @@ def set_header():
     headers["Referer"] = f"https://{VIKACG_BASE_URL}/login"
 
     try:
-        response = requests.post(url, headers=headers, data=data)
+        response = requests.post(url, headers=headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         # Handle HTTP errors
@@ -114,7 +116,7 @@ def vikacg():
     data = b'count=20&paged=1'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
-        response = requests.post(url, headers=vikacg_headers, data=data)
+        response = requests.post(url, headers=vikacg_headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
 
         del vikacg_headers["Content-Length"]
@@ -133,7 +135,7 @@ def vikacg():
     data = b'count=5'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
-        response = requests.post(url, headers=vikacg_headers, data=data)
+        response = requests.post(url, headers=vikacg_headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
 
         del vikacg_headers["Content-Length"]
@@ -151,7 +153,7 @@ def vikacg():
     url = f"https://{VIKACG_BASE_URL}/wp-json/vikacg/v1/getIndex"
     vikacg_headers["Content-Length"] = "0"
     try:
-        response = requests.post(url, headers=vikacg_headers)
+        response = requests.post(url, headers=vikacg_headers, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
         del vikacg_headers["Content-Length"]
     except KeyError:
@@ -170,7 +172,7 @@ def vikacg():
     vikacg_headers["Content-Length"] = "0"
     user_id = "1"
     try:
-        response = requests.post(url, headers=vikacg_headers)
+        response = requests.post(url, headers=vikacg_headers, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
         
         response_json = response.json()
@@ -198,7 +200,7 @@ def vikacg():
     }
     
     try:
-        response = requests.post(url, data=json.dumps(payload), headers=vikacg_headers)
+        response = requests.post(url, data=json.dumps(payload), headers=vikacg_headers, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
     except requests.HTTPError as e:
         # Handle HTTP errors
@@ -219,7 +221,7 @@ def vikacg():
     data = b'count=20&paged=1'
     vikacg_headers["Content-Length"] = str(len(data))
     try:
-        response = requests.post(url, headers=vikacg_headers, data=data)
+        response = requests.post(url, headers=vikacg_headers, data=data, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
 
         del vikacg_headers["Content-Length"]
@@ -241,7 +243,7 @@ def vikacg():
         
     url = f"https://{VIKACG_BASE_URL}/wp-json/b2/v1/userMission"
     try:
-        response = requests.post(url, headers=vikacg_headers)
+        response = requests.post(url, headers=vikacg_headers, timeout=TIME_OUT_TIME)
         response.raise_for_status()  # This will raise an HTTPError for bad requests (4XX or 5XX)
         
         response_json = response.json()
