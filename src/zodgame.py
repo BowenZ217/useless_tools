@@ -15,7 +15,7 @@ CURRENT_MONTH = str(datetime.datetime.now().month)
 ZODGAME_BASE_URL = "zodgame.xyz"
 ZODGAME_FORMHASH = "417c75e4"
 
-TIME_OUT_TIME = 10  # seconds
+TIME_OUT_TIME = 50  # seconds
 
 ZODGAME_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/",
