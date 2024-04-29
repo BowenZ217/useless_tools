@@ -1738,6 +1738,7 @@ def kf_momozhen_battle(num_battles: int=20):
             break
 
         response_text = kf_momozhen_fyg_v_intel("2", Referer=pk_url)
+        save_string_as_file(response_text, "fyg_battle", "kf_momozhen")
 
         if not response_text:
             error_count += 1
