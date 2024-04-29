@@ -17,6 +17,9 @@ plt.rcParams['axes.unicode_minus'] = False  # 正确显示负号
 
 RANK_MATCH = {'C': 0, 'CC': 1, 'CCC': 2, 'B': 3, 'BB': 4, 'BBB': 5, 'A': 6, 'AA': 7, 'AAA': 8, 'S': 9, 'SS': 10, 'SSS': 11}
 
+# 字典来维护每个装备名称对应的属性名称列表
+ATTR_ORDER_DICT = {}
+
 # --------------------------------------
 # File I/O
 # --------------------------------------
@@ -60,6 +63,10 @@ def load_and_merge_equity_data(data_folder_path, start_year, start_month, end_ye
         df = pd.DataFrame(all_equity_data)
         # 为 df 添加 df['mysterious'] 列, 依照 attributes list 中只要一项存在字符 '神秘属性'
         df['mysterious'] = df['attributes'].apply(lambda x: any('神秘属性' in s for s in x))
+        attribute_pattern = re.compile(r'\((\d+)%\)')
+        for i in range(4):  # 假设我们关心的 attributes 从 1 到 4
+            attr_col = f'attr_{i+1}'
+            df[attr_col] = df['attributes'].apply(lambda x: int(attribute_pattern.search(x[i]).group(1)) if attribute_pattern.search(x[i]) else None)
         return df
     else:
         return pd.DataFrame()
@@ -143,6 +150,26 @@ def plot_attribute_percentages_all(percentages):
     plt.xlabel('Percentage')
     plt.ylabel('Frequency')
     plt.title(f'All attributes ({min_percentage} - {max_percentage}%)')
+    plt.grid(axis='y')
+    plt.show()
+    return
+
+def plot_attribute_percentages_i(df, i):
+    """
+    显示第 i 个属性的百分比值的频率图 (f'attr_{i}', i=1,2,3,4) (histogram)
+    
+    """
+    attr_col = f'attr_{i}'
+    x = df[attr_col]
+
+    min_percentage = int(x.min())
+    max_percentage = int(x.max())
+
+    plt.figure(figsize=(10, 6))
+    plt.hist(x, bins=range(min_percentage, max_percentage+1), color='skyblue') # 属性正常范围应该为 50 - 150%
+    plt.xlabel('Percentage')
+    plt.ylabel('Frequency')
+    plt.title(f'属性 {i} ({min_percentage} - {max_percentage}%)')
     plt.grid(axis='y')
     plt.show()
     return
@@ -306,3 +333,49 @@ def get_attribute_percentages(df):
                     percent = int(match.group(3))
                     attr_perc_dict[attr_name][percent] += 1
     return attr_perc_dict, mysterious_count
+
+
+# --------------------------------------
+# Checking data
+# --------------------------------------
+
+def parse_attribute_names(attributes):
+    """
+    函数从属性字符串解析出属性名称
+    """
+    # 生命偷取 +19.4% (79%)
+    # 提取为 '生命偷取'
+    attribute_pattern = re.compile(r'(.+?)\s\+')
+    attr_names = []
+    for attr in attributes:
+        match = attribute_pattern.match(attr)
+        if match:
+            attr_name = match.group(1).strip()
+            attr_names.append(attr_name)
+    return attr_names[:4]  # 只取前四个属性
+
+# 检查属性名称的一致性
+def check_attribute_consistency(row):
+    name = row['name']
+    current_attrs = row['parsed_attributes']
+    if name in ATTR_ORDER_DICT:
+        # 比较属性顺序
+        return ATTR_ORDER_DICT[name] == current_attrs
+    else:
+        # 存储这个名称的属性顺序
+        ATTR_ORDER_DICT[name] = current_attrs
+        return True
+
+def check_equipment_attribute_data(df):
+    """
+    检查装备数据的一致性
+    
+    返回一个新的 df, 包含 'id', 'name', 'parsed_attributes' 和 'is_consistent' 列
+    """
+    new_df = pd.DataFrame()
+    new_df['id'] = df['id']
+    new_df['name'] = df['name']
+    new_df['parsed_attributes'] = df['attributes'].apply(parse_attribute_names)
+    new_df['is_consistent'] = new_df.apply(check_attribute_consistency, axis=1)
+    return new_df
+
