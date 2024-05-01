@@ -1753,7 +1753,11 @@ def kf_momozhen_battle(num_battles: int=20):
         
         log_message("成功: ")
         result = kf_momozhen_extract_battle_info(response_text)
-        momozhen_collect_data.add_battle_data(response_text)
+        try:
+            momozhen_collect_data.add_battle_data(response_text)
+        except Exception as e:
+            log_message(f"收集战斗数据失败: {e}", level="error")
+            save_string_as_file(response_text, "battle_collect_data_fail", "kf_momozhen", "utf-8")
         if result == 1:
             win_count += 1
             attempts += 1
