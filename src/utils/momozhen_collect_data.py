@@ -117,9 +117,9 @@ def parse_guguzhen_battle_state(soup):
 
         return stats
 
-    rows = soup.select('.row.fyg_pvero.fyg_boinfo.hl-info > div')
-    user_stats = extract_stats(rows[0])
-    enemy_stats = extract_stats(rows[1])
+    stats_divs = soup.find_all("div", class_="col-md-6")
+    user_stats = extract_stats(stats_divs[0])
+    enemy_stats = extract_stats(stats_divs[1])
 
     return {
         'user_states': user_stats,
@@ -138,12 +138,21 @@ def parse_guguzhen_battle_info(soup):
     def extract_data(container, info_key):
         # Extract name, card name and level
         name_info = container.find('span', class_='fyg_f18').text.strip()
+        # 格式为 "（Lv.775 默）{name}"
         name_match = re.search(r'\（Lv\.(\d+) ([^）]+)\）(.+)', name_info)
         if name_match:
             card_level, card_name, name = name_match.groups()
-            result[info_key]['name'] = name
-            result[info_key]['card_name'] = card_name
+            result[info_key]['name'] = name.strip()
+            result[info_key]['card_name'] = card_name.strip()
             result[info_key]['card_level'] = int(card_level)
+        else:
+            # 格式为 "{name}（梦 Lv.701）"
+            name_match = re.search(r'(.+?)\（([^ ]+) Lv\.(\d+)\）', name_info)
+            if name_match:
+                name, card_name, card_level = name_match.groups()
+                result[info_key]['name'] = name.strip()
+                result[info_key]['card_name'] = card_name.strip()
+                result[info_key]['card_level'] = int(card_level)
 
         # Extract stats
         stats = container.find_all('span', class_='label-outline')

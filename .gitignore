@@ -162,6 +162,7 @@ cython_debug/
 # My tests
 test.py
 run.py
+temp.ipynb
 logs/
 sayhuahuo/
 kf_feiyue/
