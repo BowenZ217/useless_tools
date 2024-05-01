@@ -48,12 +48,20 @@ def clear_file(filename):
         pass  # 打开文件后不做任何操作，自动清空内容
 
 def merge_data(data1, data2):
-    """合并两个数据字典"""
-    for key in data2:
+    """递归合并两个字典"""
+    for key, value in data2.items():
         if key in data1:
-            data1[key] += data2[key]
+            if isinstance(data1[key], dict) and isinstance(value, dict):
+                merge_data(data1[key], value)
+            elif isinstance(data1[key], list) and isinstance(value, list):
+                data1[key].extend(value)
+            elif isinstance(data1[key], (int, float)) and isinstance(value, (int, float)):
+                data1[key] += value
+            else:
+                # raise ValueError(f"Cannot merge non-compatible types for key: {key}")
+                data1[key] += value
         else:
-            data1[key] = data2[key]
+            data1[key] = value
     return data1
 
 # ----------------------------------------------
