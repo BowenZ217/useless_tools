@@ -16,12 +16,12 @@
             "酱油": 39
         }
     },
-    "total_run_count": 54,
+    "total_run_count": 55,
     "5": {
         "level_plus": {
             "tasks_completed": {
                 "每周签到": 1,
-                "每日签到": 1
+                "每日签到": 2
             }
         },
         "vikacg": {
@@ -31,7 +31,7 @@
             "酱油": 6
         },
         "galcg": {
-            "credit_added": 10
+            "credit_added": 25
         }
     }
 }
