@@ -259,7 +259,7 @@ def plot_pie_chart(df, column):
 
 def plot_user_rank(df):
     """
-    绘制用户等级的频率图
+    绘制用户等级
     """
     # 绘图展示排位变化
     plt.figure(figsize=(10, 6))
@@ -268,6 +268,19 @@ def plot_user_rank(df):
     plt.ylabel('段位')
     plt.title('段位 变化图')
     plt.yticks(range(len(RANK_MATCH)), RANK_MATCH.keys())  # 设置Y轴的刻度标签
+    plt.grid(axis='y')
+    plt.show()
+    return
+
+def plot_user_level(df):
+    """
+    绘制用户等级 ("user_level")
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(df.index, df['user_level'], marker='o')  # 使用日期作为X轴
+    plt.xlabel('Date')
+    plt.ylabel('等级')
+    plt.title('等级 变化图')
     plt.grid(axis='y')
     plt.show()
     return
