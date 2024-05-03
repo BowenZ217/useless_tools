@@ -1940,8 +1940,12 @@ def kf_momozhen_parse_user_info(html_content):
 
         # 判断BVIP和SVIP状态
         # 我们假定如果天数大于0，则用户为VIP
-        bvip_days = int(soup.find('p', {'class': 'with-padding hl-warning'}).span.text.split('天')[0])
-        svip_days = int(soup.find('p', {'class': 'with-padding hl-danger'}).span.text.split('天')[0])
+        try:
+            bvip_days = int(soup.find('p', {'class': 'with-padding hl-warning'}).span.text.split('天')[0])
+            svip_days = int(soup.find('p', {'class': 'with-padding hl-danger'}).span.text.split('天')[0])
+        except Exception as e:
+            bvip_days = 0
+            svip_days = 0
 
         bvip = bvip_days > 0
         svip = svip_days > 0
