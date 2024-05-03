@@ -1932,23 +1932,36 @@ def kf_momozhen_parse_user_info(html_content):
         # 使用BeautifulSoup解析HTML内容
         soup = BeautifulSoup(html_content, 'html.parser')
 
-        # 提取段位
-        rank = soup.find('p', {'class': 'fyg_lh40 with-padding bg-danger'}).span.text.strip()
+        try:
+            # 提取段位
+            rank = soup.find('p', {'class': 'fyg_lh40 with-padding bg-danger'}).span.text.strip()
+        except Exception as e:
+            log_message(f"解析段位时出错: {e}", level="error")
+            rank = "Unknown"
 
-        # 提取等级
-        user_level = int(soup.find('p', {'class': 'fyg_lh40 with-padding bg-success'}).span.text.strip())
+        try:
+            # 提取等级
+            user_level = int(soup.find('p', {'class': 'fyg_lh40 with-padding bg-success'}).span.text.strip())
+        except Exception as e:
+            log_message(f"解析等级时出错: {e}", level="error")
+            user_level = -1
 
         # 判断BVIP和SVIP状态
         # 我们假定如果天数大于0，则用户为VIP
         try:
             bvip_days = int(soup.find('p', {'class': 'with-padding hl-warning'}).span.text.split('天')[0])
-            svip_days = int(soup.find('p', {'class': 'with-padding hl-danger'}).span.text.split('天')[0])
+            bvip = bvip_days > 0
         except Exception as e:
-            bvip_days = 0
-            svip_days = 0
+            log_message(f"解析用户 BVIP 时出错: {e}", level="error")
+            bvip = False
+        
+        try:
+            svip_days = int(soup.find('p', {'class': 'with-padding hl-danger'}).span.text.split('天')[0])
+            svip = svip_days > 0
+        except Exception as e:
+            log_message(f"解析用户 SVIP 时出错: {e}", level="error")
+            svip = False
 
-        bvip = bvip_days > 0
-        svip = svip_days > 0
     except Exception as e:
         log_message(f"解析用户信息时出错: {e}", level="error")
         rank = "Unknown"
