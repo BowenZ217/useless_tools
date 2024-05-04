@@ -25,13 +25,13 @@ def unpickle(file):
     Unpickle file
     :param file: file path
 
-    :return: dict
+    :return: data from file
     """
     if not os.path.exists(file):
         return None
     with open(file, 'rb') as fo:
-        dict = pickle.load(fo, encoding='bytes')
-    return dict
+        data = pickle.load(fo, encoding='bytes')
+    return data
 
 def pickle_data(data, file):
     """
