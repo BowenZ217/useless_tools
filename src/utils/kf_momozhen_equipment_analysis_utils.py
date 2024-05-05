@@ -32,10 +32,10 @@ def unpickle(file):
     :return: dict
     """
     if not os.path.exists(file):
-        return {}
+        return None
     with open(file, 'rb') as fo:
-        dict = pickle.load(fo, encoding='bytes')
-    return dict
+        data = pickle.load(fo, encoding='bytes')
+    return data
 
 def load_and_merge_equity_data(data_folder_path, start_year, start_month, end_year, end_month):
     """
@@ -55,6 +55,8 @@ def load_and_merge_equity_data(data_folder_path, start_year, start_month, end_ye
             filename = f"momozhen_{year}_{month}.pkl"
             file_path = os.path.join(data_folder_path, filename)
             data = unpickle(file_path)
+            if not data:
+                continue
             if data and "equity_data" in data:
                 all_equity_data.extend(data["equity_data"])
 
@@ -89,6 +91,8 @@ def load_and_merge_user_info(data_folder_path, start_year, start_month, end_year
             filename = f"momozhen_{year}_{month}.pkl"
             file_path = os.path.join(data_folder_path, filename)
             data = unpickle(file_path)
+            if not data:
+                continue
             if data and "user_info" in data:
                 for day, day_data in data["user_info"].items():
                     user_info[f'{year}-{month}-{day}'] = day_data
