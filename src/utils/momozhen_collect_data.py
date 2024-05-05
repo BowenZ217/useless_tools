@@ -1,3 +1,4 @@
+import bz2
 import datetime
 import os
 import pickle
@@ -22,25 +23,24 @@ KF_MOMOZHEN_BATTLE_DATA = []
 
 def unpickle(file):
     """
-    Unpickle file
+    Unpickle file using bz2 and pickle.
     :param file: file path
 
     :return: data from file
     """
     if not os.path.exists(file):
         return None
-    with open(file, 'rb') as fo:
-        data = pickle.load(fo, encoding='bytes')
-    return data
+    with bz2.open(file, 'rb') as fo:
+        return pickle.load(fo)
 
 def pickle_data(data, file):
     """
-    Pickle data to file
+    Pickle data to file using bz2 and pickle.
 
     :param data: data to pickle
     :param file: file path
     """
-    with open(file, 'wb') as fo:
+    with bz2.open(file, 'wb') as fo:
         pickle.dump(data, fo)
 
 def load_data():

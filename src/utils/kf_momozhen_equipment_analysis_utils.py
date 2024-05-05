@@ -1,3 +1,4 @@
+import bz2
 import os
 import pickle
 import re
@@ -26,16 +27,15 @@ ATTR_ORDER_DICT = {}
 
 def unpickle(file):
     """
-    Unpickle file
+    Unpickle file using bz2 and pickle.
     :param file: file path
 
-    :return: dict
+    :return: data from file
     """
     if not os.path.exists(file):
         return None
-    with open(file, 'rb') as fo:
-        data = pickle.load(fo, encoding='bytes')
-    return data
+    with bz2.open(file, 'rb') as fo:
+        return pickle.load(fo)
 
 def load_and_merge_equity_data(data_folder_path, start_year, start_month, end_year, end_month):
     """
