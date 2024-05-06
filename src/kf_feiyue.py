@@ -111,7 +111,7 @@ def kf_feiyue():
 
     # 如果 a_tags 为空, 则 log 没有找到链接
     if not a_tags:
-        save_string_as_file(response_text, prefix="kf_feiyue", folder="kf_feiyue")
+        # save_string_as_file(response_text, prefix="kf_feiyue", folder="kf_feiyue")
         log_message("没有找到链接")
 
     # 对于找到的每个匹配项, 提取并打印href属性

@@ -11,6 +11,7 @@ directories_to_remove = [
     "level_plus",
     "vikacg",
     "galcg",
+    "zodgame",
 ]
 
 def clean():
