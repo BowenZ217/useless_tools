@@ -2,6 +2,7 @@ import datetime
 import os
 import random
 import re
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -84,6 +85,67 @@ def zodgame_update_formhash(html_str: str):
         log_message(f"更新 ZODGAME_FORMHASH 时出现错误: {e}", level="error")
         return False
     return True
+
+def zodgame_extract_earn_points_info(html_str: str):
+    """
+    从赚积分页面提取任务信息
+    """
+    # Updated dictionary to hold task details
+    tasks_dict = {}
+
+    try:
+        # 解析 HTML
+        soup = BeautifulSoup(html_str, 'html.parser')
+        
+        # Find all <script> elements that define the opening of new windows using the corrected method
+        scripts = soup.find_all("script", string=re.compile("function openNewWindow\d+\(\)"))
+        for script in scripts:
+            function_content = script.string.strip()
+            task_id_search = re.search(r"function openNewWindow(\d+)", function_content)
+            if task_id_search:
+                task_id = task_id_search.group(1)
+                url_search = re.search(r"window.open\(\"(.*?)\",", function_content)
+                if url_search:
+                    ad_url = url_search.group(1)
+                    tasks_dict[task_id] = {"ad_url": ad_url}
+
+        # Find all rows in the table that have task details
+        task_rows = soup.find_all("tr")
+        for row in task_rows:
+            cells = row.find_all("td")
+            if len(cells) < 6:  # Ensure it's a row with enough columns
+                continue
+
+            id_cell = cells[0].text.strip()
+            if id_cell.isdigit() and id_cell in tasks_dict:  # Check if it matches a task id
+                # Extract additional data from the row
+                title = cells[1].text.strip()
+                reward = cells[2].text.strip()
+                time_seconds_match = re.search(r'(\d+) 秒', cells[3].text.strip())
+                if not time_seconds_match:
+                    continue
+                time_seconds = int(time_seconds_match.group(1))
+                status = cells[4].text.strip()
+                operation = cells[5].text.strip()
+                
+                # Regex to find check URL
+                check_link_search = re.search(r"showWindow\('check', '(.*?)'\)", cells[5].a['onclick'])
+                if not check_link_search:
+                    continue  # Skip this task if no check URL is found
+                check_url = check_link_search.group(1)
+                tasks_dict[id_cell].update({
+                    "title": title,
+                    "reward": reward,
+                    "check_time": time_seconds,
+                    "status": status,
+                    "operation": operation,
+                    "check_url": check_url
+                })
+
+    except Exception as e:
+        log_message(f"提取赚积分信息时出现错误: {e}", level="error")
+
+    return tasks_dict
 
 def zodgame_extract_sign_in_info(html_str: str):
     """
@@ -247,10 +309,94 @@ def zodgame_sign_in_page():
 # zodgame 的一些操作
 # ------------------------------
 
+def zodgame_process_earn_points_task(task_id: str, task_info: dict):
+    """
+    处理赚积分任务
+
+    :param task_id: 任务 ID
+    :param task_info: 任务信息
+
+    :return: 处理结果
+    """
+    # 访问广告页面
+    ad_url = task_info.get("ad_url", "")
+    if not ad_url:
+        log_message(f"任务 ({task_id}) 的广告链接为空", level="error")
+        return False
+    try:
+        url = f"https://{ZODGAME_BASE_URL}/{ad_url}"
+        response = requests.get(url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
+        save_string_as_file(response.text, f"zodgame_task_{task_id}_click", "zodgame")
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log_message(f"请求广告页面 ({url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
+        return False
+    except requests.RequestException as e:
+        log_message(f"请求广告页面 ({url}) (Request Error): {e}", level="error")
+        return False
+    except Exception as e:
+        log_message(f"请求广告页面 ({url}) 失败: {e}", level="error")
+        return False
+
+    # 等待一段时间
+    time.sleep(task_info['check_time'] + 2) # 多两秒容错
+
+    # 访问更新页面
+    try:
+        update_url = url.replace("do=click", "do=update")
+        response = requests.get(update_url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
+        save_string_as_file(response.text, f"zodgame_task_{task_id}_update", "zodgame")
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log_message(f"请求更新页面 ({update_url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
+        return False
+    except requests.RequestException as e:
+        log_message(f"请求更新页面 ({update_url}) (Request Error): {e}", level="error")
+        return False
+    except Exception as e:
+        log_message(f"请求更新页面 ({update_url}) 失败: {e}", level="error")
+        return False
+
+    # 等待一段时间
+    time.sleep(1)
+
+    # 访问检查页面
+    check_url = task_info.get("check_url", "")
+    if not check_url:
+        log_message(f"任务 ({task_id}) 的检查链接为空", level="error")
+        return False
+    try:
+        url = f"https://{ZODGAME_BASE_URL}/{check_url}"
+        response = requests.get(url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
+        save_string_as_file(response.text, f"zodgame_task_{task_id}_final", "zodgame")
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        log_message(f"请求检查页面 ({url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
+        return False
+    except requests.RequestException as e:
+        log_message(f"请求检查页面 ({url}) (Request Error): {e}", level="error")
+        return False
+    except Exception as e:
+        log_message(f"请求检查页面 ({url}) 失败: {e}", level="error")
+        return False
+    
+    return True
+
 def zodgame_process_earn_points():
     response_text = zodgame_earn_points_page()
     # 保存页面内容, 以备分析
-    save_string_as_file(response_text, "zodgame_earn_points_page", "zodgame")
+    # save_string_as_file(response_text, "zodgame_earn_points_page", "zodgame")
+    tasks_dict = zodgame_extract_earn_points_info(response_text)
+    if not tasks_dict:
+        log_message("没有找到任务信息")
+        return
+    
+    for task_id, task_info in tasks_dict.items():
+        log_message(f"任务 ({task_id}) : {task_info['title']}\n奖励: {task_info['reward']}\n所需时间: {task_info['check_time']} 秒")
+
+        # 处理任务
+        zodgame_process_earn_points_task(task_id, task_info)
+
     return
 
 def zodgame_process_sign_in():
