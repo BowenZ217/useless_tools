@@ -1,4 +1,7 @@
-import json 
+import bz2
+import json
+import os
+import pickle
 import re
 
 from bs4 import BeautifulSoup
@@ -10,8 +13,34 @@ battle_results_statistics = {}
 battle_records = []
 
 KF_MOMOZHEN_DICE_WAR_REWARD_STATS_PATH = "./data/kf_momozhen_dice_war_reward_stats.json"
-KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH = "./data/kf_momozhen_dice_war_battle_records.json"
+KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH = "./data/kf_momozhen_dice_war_battle_records.pkl"
 KF_MOMOZHEN_DICE_WAR_DATA_FOLDER = "./kf_momozhen" # "dice_war_{id}.txt"
+
+# -----------------------
+# File I/O
+# -----------------------
+
+def unpickle(file):
+    """
+    Unpickle file using bz2 and pickle.
+    :param file: file path
+
+    :return: data from file
+    """
+    if not os.path.exists(file):
+        return None
+    with bz2.open(file, 'rb') as fo:
+        return pickle.load(fo)
+
+def pickle_data(data, file):
+    """
+    Pickle data to file using bz2 and pickle.
+
+    :param data: data to pickle
+    :param file: file path
+    """
+    with bz2.open(file, 'wb') as fo:
+        pickle.dump(data, fo)
 
 def load_data():
     global total_rewards_statistics
@@ -31,8 +60,11 @@ def load_data():
         battle_results_statistics = {}
     
     try:
-        with open(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH, "r", encoding="utf-8") as f:
-            battle_records = json.load(f)
+        # with open(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH, "r", encoding="utf-8") as f:
+        #     battle_records = json.load(f)
+        battle_records = unpickle(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH)
+        if not battle_records:
+            battle_records = []
     except FileNotFoundError:
         battle_records = []
 
@@ -45,8 +77,9 @@ def save_data():
     with open(KF_MOMOZHEN_DICE_WAR_REWARD_STATS_PATH, "w", encoding="utf-8") as f:
         json.dump(reward_states, f, ensure_ascii=False, indent=4)
     
-    with open(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH, "w", encoding="utf-8") as f:
-        json.dump(battle_records, f, ensure_ascii=False, indent=4)
+    # with open(KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH, "w", encoding="utf-8") as f:
+    #     json.dump(battle_records, f, ensure_ascii=False, indent=4)
+    pickle_data(battle_records, KF_MOMOZHEN_DICE_WAR_BATTLE_RECORDS_PATH)
 
 def process_dice_war_page(html_content: str):
     global awards_count_statistics, battle_records, battle_results_statistics
@@ -160,12 +193,12 @@ def process_total_rewards_statistics():
     patterns = {
         "贝壳": r"获得 (\d+) 贝壳",
         "星沙": r"获得 (\d+) 星沙",
+        "SVIP": r"获得SVIP (\d+) 天",
+        "BVIP": r"获得BVIP (\d+) 天",
         "光环天赋石": r"获得光环天赋提升道具 光环天赋石",
         "灵魂药水": r"获得角色卡片强化道具 灵魂药水",
         "随机装备箱": r"获得沙滩装备刷新道具 随机装备箱",
         "体能刺激药水": r"获得体力恢复道具 体能刺激药水",
-        "SVIP": r"获得 SVIP",
-        "BVIP": r"获得 BVIP",
         # Add more patterns if needed
     }
     total_times_count = 0
@@ -175,7 +208,7 @@ def process_total_rewards_statistics():
             match = re.search(pattern, award_message)
             if match:
                 # 如果是数字奖励类型 (如贝壳、星沙), 需要将匹配到的数量转换为整数后进行累加
-                if pattern_name in ["贝壳", "星沙"]:
+                if pattern_name in ["贝壳", "星沙", "SVIP", "BVIP"]:
                     quantity = int(match.group(1)) * count  # 将数量乘以次数得到总量
                     if pattern_name in total_rewards_statistics:
                         total_rewards_statistics[pattern_name] += quantity
@@ -193,7 +226,7 @@ def main():
     # Load data from JSON files
     load_data()
 
-    process_dice_war_pages(0, 39)
+    process_dice_war_pages(0, 69)
     process_total_rewards_statistics()
 
     # Save data to JSON files
