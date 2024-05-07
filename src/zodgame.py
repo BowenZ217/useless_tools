@@ -220,6 +220,31 @@ def zodgame_extract_sign_in(response_text: str) -> int:
         log_message(f'在提取签到信息时发生错误: {str(e)}')
     return 0
 
+def zodgame_extract_earn_point_task_page(html_str: str, task: str) -> str:
+    """
+    从赚积分任务页面提取任务当前状态
+    """
+    try:
+        # 解析 HTML
+        soup = BeautifulSoup(html_str, 'html.parser')
+
+        if "click" in task or "update" in task:
+            # 提取 <div class="jnbux_hd"> 中的文本
+            task_info = soup.find("div", class_="jnbux_hd")
+            if task_info:
+                return task_info.text
+        elif "final" in task:
+            task_info = soup.find("div", id="messagetext")
+            if task_info:
+                task_text = task_info.text
+                task_text = re.sub(r"如果您的浏览器没有自动跳转，请点击此链接", "", task_text)
+                return task_text.strip()
+        else:
+            return soup.get_text()
+    except Exception as e:
+        print(f"提取任务 ({task}) 信息时出现错误: {e}")
+    return ""
+
 # ------------------------------
 # zodgame 的一些请求接口
 # ------------------------------
@@ -326,7 +351,8 @@ def zodgame_process_earn_points_task(task_id: str, task_info: dict):
     try:
         url = f"https://{ZODGAME_BASE_URL}/{ad_url}"
         response = requests.get(url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
-        save_string_as_file(response.text, f"zodgame_task_{task_id}_click", "zodgame")
+        result = zodgame_extract_earn_point_task_page(response.text, "click")
+        log_message(f"任务 ({task_id}) 的广告初始点击页面: {result}")
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求广告页面 ({url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
@@ -345,7 +371,8 @@ def zodgame_process_earn_points_task(task_id: str, task_info: dict):
     try:
         update_url = url.replace("do=click", "do=update")
         response = requests.get(update_url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
-        save_string_as_file(response.text, f"zodgame_task_{task_id}_update", "zodgame")
+        result = zodgame_extract_earn_point_task_page(response.text, "update")
+        log_message(f"任务 ({task_id}) 的更广告新页面: {result}")
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求更新页面 ({update_url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
@@ -368,7 +395,17 @@ def zodgame_process_earn_points_task(task_id: str, task_info: dict):
     try:
         url = f"https://{ZODGAME_BASE_URL}/{check_url}"
         response = requests.get(url, headers=ZODGAME_HEADERS, timeout=TIME_OUT_TIME)
-        save_string_as_file(response.text, f"zodgame_task_{task_id}_final", "zodgame")
+        result = zodgame_extract_earn_point_task_page(response.text, "final")
+        log_message(f"任务 ({task_id}) 的检查页面: {result}")
+        if "成功" in result:
+            # e.x. task_info['reward'] = "2 点币"
+            # 从中提取数字 和 单位
+            reward_match = re.match(r"(\d+)(.+)", task_info['reward'])
+            if reward_match:
+                reward_num = int(reward_match.group(1))
+                reward_unit = reward_match.group(2).strip()
+                json_data_handler.increment_value(reward_num, CURRENT_MONTH, "zodgame", reward_unit)
+                json_data_handler.increment_value(1, CURRENT_MONTH, "zodgame", "任务", task_id)
         response.raise_for_status()
     except requests.HTTPError as e:
         log_message(f"请求检查页面 ({url}) 失败 HTTP Error ({response.status_code}): {e}", level="error")
@@ -384,8 +421,7 @@ def zodgame_process_earn_points_task(task_id: str, task_info: dict):
 
 def zodgame_process_earn_points():
     response_text = zodgame_earn_points_page()
-    # 保存页面内容, 以备分析
-    # save_string_as_file(response_text, "zodgame_earn_points_page", "zodgame")
+    
     tasks_dict = zodgame_extract_earn_points_info(response_text)
     if not tasks_dict:
         log_message("没有找到任务信息")
