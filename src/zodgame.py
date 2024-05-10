@@ -16,7 +16,7 @@ CURRENT_MONTH = str(datetime.datetime.now().month)
 ZODGAME_BASE_URL = "zodgame.xyz"
 ZODGAME_FORMHASH = "417c75e4"
 
-TIME_OUT_TIME = 50  # seconds
+TIME_OUT_TIME = 30  # seconds
 
 ZODGAME_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/",
@@ -98,7 +98,7 @@ def zodgame_extract_earn_points_info(html_str: str):
         soup = BeautifulSoup(html_str, 'html.parser')
         
         # Find all <script> elements that define the opening of new windows using the corrected method
-        scripts = soup.find_all("script", string=re.compile("function openNewWindow\d+\(\)"))
+        scripts = soup.find_all("script", string=re.compile(r"function openNewWindow\d+\(\)"))
         for script in scripts:
             function_content = script.string.strip()
             task_id_search = re.search(r"function openNewWindow(\d+)", function_content)
@@ -421,7 +421,7 @@ def zodgame_process_earn_points_task(task_id: str, task_info: dict):
 
 def zodgame_process_earn_points():
     response_text = zodgame_earn_points_page()
-    
+
     tasks_dict = zodgame_extract_earn_points_info(response_text)
     if not tasks_dict:
         log_message("没有找到任务信息")
