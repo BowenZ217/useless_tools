@@ -1,9 +1,15 @@
 import datetime
+import sys
+import os
 import time
 
+# 将项目根目录添加到sys.path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
+
 # 引用 src 包下的模块
-from ..src.utils import logger, json_data_handler
-from ..src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic, zodgame
+from src.utils import logger, json_data_handler
+from src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic, zodgame
 
 def main():
     # 设置日志
