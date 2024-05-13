@@ -39,7 +39,7 @@ jobs:
           JMCOMIC_PASSWORD: ${{ secrets.JMCOMIC_PASSWORD }}
           ZODGAME_COOKIE: ${{ secrets.ZODGAME_COOKIE }}
         run: |
-          python main.py
+          python scripts\checkin.py
 
       - name: Upload 'logs' directory
         uses: actions/upload-artifact@v4
