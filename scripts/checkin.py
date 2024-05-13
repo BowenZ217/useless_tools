@@ -2,8 +2,8 @@ import datetime
 import time
 
 # 引用 src 包下的模块
-from src.utils import logger, json_data_handler
-from src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic, zodgame
+from ..src.utils import logger, json_data_handler
+from ..src import kf_momozhen, sayhuahuo, kf_feiyue, level_plus, vikacg, galcg, jmcomic, zodgame
 
 def main():
     # 设置日志
