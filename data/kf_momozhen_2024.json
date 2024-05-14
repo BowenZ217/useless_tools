@@ -95,7 +95,7 @@
             "win_count": 229,
             "lose_count": 230,
             "draw_count": 123,
-            "error_count": 0
+            "error_count": 120
         },
         "沙滩": {
             "clean_count": {
@@ -157,7 +157,7 @@
             }
         },
         "使用体力药水": {
-            "次数": 10
+            "次数": 12
         },
         "许愿池": {
             "词条次数": {
