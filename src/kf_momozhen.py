@@ -1985,6 +1985,17 @@ def kf_momozhen_add_user_info():
     momozhen_collect_data.add_user_info(user_info)
     return
 
+def kf_momozhen_check_login_status():
+    """
+    检查登录状态
+    """
+    response_text = kf_momozhen_fyg_index()
+    # "你当前处于未登录状态"
+    if "未登录" in response_text:
+        log_message("未登录")
+        return False
+    return True
+
 # ------------------------------
 # 主函数
 # ------------------------------
@@ -2032,6 +2043,16 @@ def kf_momozhen_start():
     """开始执行 kf 咕咕镇 签到"""
     if not set_cookie():
         return
+    
+    # 检查登录状态
+    for _ in range(5):
+        if kf_momozhen_check_login_status():
+            break
+        set_cookie()
+        time.sleep(1)
+    if not kf_momozhen_check_login_status():
+        return
+
     kf_momozhen_update_safeid()
     # 签到
     kf_momozhen()
