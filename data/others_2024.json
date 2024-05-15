@@ -16,16 +16,16 @@
             "酱油": 39
         }
     },
-    "total_run_count": 81,
+    "total_run_count": 82,
     "5": {
         "level_plus": {
             "tasks_completed": {
                 "每周签到": 3,
-                "每日签到": 14
+                "每日签到": 15
             }
         },
         "vikacg": {
-            "credit_added": 14550
+            "credit_added": 16414
         },
         "zodgame": {
             "酱油": 63,
@@ -38,7 +38,7 @@
             }
         },
         "galcg": {
-            "credit_added": 183
+            "credit_added": 194
         }
     }
 }
