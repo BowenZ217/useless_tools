@@ -105,8 +105,7 @@ def make_requests(action: str, times: int, base_url: str=None):
                 log_message(f"Response: {decompressed_content}\n")
             else:
                 log_message("请求失败.")
-            if i % 2 == 0:
-                time.sleep(1)
+            time.sleep(1)
         except requests.exceptions.RequestException as e:
             log_message(f"请求失败: {e}")
 
