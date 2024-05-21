@@ -23,13 +23,15 @@ vikacg_headers = {
     "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
     "Content-Type": "application/x-www-form-urlencoded",
     "Origin": f"https://{VIKACG_BASE_URL}",
-    "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
+    # "Sec-Ch-Ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Microsoft Edge\";v=\"122\"",
+    "Sec-Ch-Ua": "\"Chromium\";v=\"124\", \"Google Chrome\";v=\"124\", \"Not-A.Brand\";v=\"99\"",
     "Sec-Ch-Ua-Mobile": "?0",
     "Sec-Ch-Ua-Platform": "\"Windows\"",
     "Sec-Fetch-Dest": "empty",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+    # "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
 }
 
 def set_header():
@@ -50,7 +52,9 @@ def set_header():
         "password": password,
     }
     headers = vikacg_headers.copy()
-    headers["Referer"] = f"https://{VIKACG_BASE_URL}/login"
+    headers["Referer"] = f"https://{VIKACG_BASE_URL}/post"
+    headers["Content-Length"] = str(len(json.dumps(data)))
+    headers["Content-Type"] = "application/json"
 
     try:
         response = requests.post(url, headers=headers, data=data, timeout=TIME_OUT_TIME)
