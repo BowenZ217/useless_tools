@@ -184,5 +184,13 @@
                 " 生命药水 +1!": 1
             }
         }
+    },
+    "6": {
+        "battle": {
+            "win_count": 0,
+            "lose_count": 0,
+            "draw_count": 0,
+            "error_count": 0
+        }
     }
 }

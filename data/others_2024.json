@@ -16,7 +16,7 @@
             "酱油": 39
         }
     },
-    "total_run_count": 114,
+    "total_run_count": 115,
     "5": {
         "level_plus": {
             "tasks_completed": {
@@ -39,6 +39,16 @@
         },
         "galcg": {
             "credit_added": 404
+        }
+    },
+    "6": {
+        "zodgame": {
+            "点币": 4,
+            "任务": {
+                "66": 1,
+                "65": 1
+            },
+            "酱油": 3
         }
     }
 }
