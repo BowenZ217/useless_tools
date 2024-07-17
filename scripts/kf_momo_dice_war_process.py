@@ -226,7 +226,7 @@ def main():
     # Load data from JSON files
     load_data()
 
-    process_dice_war_pages(0, 129)
+    process_dice_war_pages(0, 159)
     process_total_rewards_statistics()
 
     # Save data to JSON files
