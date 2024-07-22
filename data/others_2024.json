@@ -16,7 +16,7 @@
             "酱油": 39
         }
     },
-    "total_run_count": 219,
+    "total_run_count": 220,
     "5": {
         "level_plus": {
             "tasks_completed": {
@@ -71,10 +71,10 @@
                 "70": 4,
                 "69": 4
             },
-            "酱油": 91
+            "酱油": 97
         },
         "galcg": {
-            "credit_added": 260
+            "credit_added": 272
         }
     }
 }
