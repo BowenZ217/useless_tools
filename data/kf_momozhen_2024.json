@@ -371,5 +371,24 @@
                 "2": 3
             }
         }
+    },
+    "8": {
+        "battle": {
+            "win_count": 0,
+            "lose_count": 0,
+            "draw_count": 0,
+            "error_count": 0
+        },
+        "沙滩": {
+            "clean_count": {
+                "2": 10,
+                "1": 8,
+                "3": 2
+            },
+            "clean_result": {
+                "蓝锻造石": 44,
+                "绿锻造石": 2
+            }
+        }
     }
 }
